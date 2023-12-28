@@ -9,19 +9,29 @@
 /* Begin PBXBuildFile section */
 		B4AB3C602B3DEC0E006EDFBE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C5F2B3DEC0E006EDFBE /* AppDelegate.swift */; };
 		B4AB3C622B3DEC0E006EDFBE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C612B3DEC0E006EDFBE /* SceneDelegate.swift */; };
-		B4AB3C642B3DEC0E006EDFBE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C632B3DEC0E006EDFBE /* ViewController.swift */; };
 		B4AB3C692B3DEC10006EDFBE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4AB3C682B3DEC10006EDFBE /* Assets.xcassets */; };
 		B4AB3C6C2B3DEC10006EDFBE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B4AB3C6A2B3DEC10006EDFBE /* LaunchScreen.storyboard */; };
+		B4AB3C752B3DECA7006EDFBE /* NBTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C742B3DECA7006EDFBE /* NBTransaction.swift */; };
+		B4AB3C782B3DF168006EDFBE /* NBTransactionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C772B3DF168006EDFBE /* NBTransactionsViewController.swift */; };
+		B4AB3C7A2B3DF17A006EDFBE /* NBAddTransactionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C792B3DF17A006EDFBE /* NBAddTransactionViewController.swift */; };
+		B4AB3C7D2B3DF20A006EDFBE /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C7C2B3DF20A006EDFBE /* UIView+Extension.swift */; };
+		B4AB3C802B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C7F2B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift */; };
+		B4AB3C862B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C852B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B4AB3C5C2B3DEC0E006EDFBE /* NumbersApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NumbersApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4AB3C5F2B3DEC0E006EDFBE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B4AB3C612B3DEC0E006EDFBE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		B4AB3C632B3DEC0E006EDFBE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		B4AB3C682B3DEC10006EDFBE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B4AB3C6B2B3DEC10006EDFBE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B4AB3C6D2B3DEC10006EDFBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B4AB3C742B3DECA7006EDFBE /* NBTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTransaction.swift; sourceTree = "<group>"; };
+		B4AB3C772B3DF168006EDFBE /* NBTransactionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTransactionsViewController.swift; sourceTree = "<group>"; };
+		B4AB3C792B3DF17A006EDFBE /* NBAddTransactionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBAddTransactionViewController.swift; sourceTree = "<group>"; };
+		B4AB3C7C2B3DF20A006EDFBE /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		B4AB3C7F2B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTextFieldTableViewCell.swift; sourceTree = "<group>"; };
+		B4AB3C852B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBButtonHeaderFooterView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,12 +66,49 @@
 			children = (
 				B4AB3C5F2B3DEC0E006EDFBE /* AppDelegate.swift */,
 				B4AB3C612B3DEC0E006EDFBE /* SceneDelegate.swift */,
-				B4AB3C632B3DEC0E006EDFBE /* ViewController.swift */,
+				B4AB3C732B3DEC84006EDFBE /* Models */,
+				B4AB3C7E2B3DF362006EDFBE /* Views */,
+				B4AB3C762B3DF156006EDFBE /* Controllers */,
+				B4AB3C7B2B3DF200006EDFBE /* Extensions */,
 				B4AB3C682B3DEC10006EDFBE /* Assets.xcassets */,
 				B4AB3C6A2B3DEC10006EDFBE /* LaunchScreen.storyboard */,
 				B4AB3C6D2B3DEC10006EDFBE /* Info.plist */,
 			);
 			path = NumbersApp;
+			sourceTree = "<group>";
+		};
+		B4AB3C732B3DEC84006EDFBE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B4AB3C742B3DECA7006EDFBE /* NBTransaction.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B4AB3C762B3DF156006EDFBE /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				B4AB3C772B3DF168006EDFBE /* NBTransactionsViewController.swift */,
+				B4AB3C792B3DF17A006EDFBE /* NBAddTransactionViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		B4AB3C7B2B3DF200006EDFBE /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B4AB3C7C2B3DF20A006EDFBE /* UIView+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B4AB3C7E2B3DF362006EDFBE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B4AB3C7F2B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift */,
+				B4AB3C852B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,9 +181,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4AB3C642B3DEC0E006EDFBE /* ViewController.swift in Sources */,
+				B4AB3C802B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift in Sources */,
+				B4AB3C7D2B3DF20A006EDFBE /* UIView+Extension.swift in Sources */,
+				B4AB3C752B3DECA7006EDFBE /* NBTransaction.swift in Sources */,
 				B4AB3C602B3DEC0E006EDFBE /* AppDelegate.swift in Sources */,
+				B4AB3C782B3DF168006EDFBE /* NBTransactionsViewController.swift in Sources */,
 				B4AB3C622B3DEC0E006EDFBE /* SceneDelegate.swift in Sources */,
+				B4AB3C862B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift in Sources */,
+				B4AB3C7A2B3DF17A006EDFBE /* NBAddTransactionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
