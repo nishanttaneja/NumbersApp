@@ -17,6 +17,9 @@
 		B4AB3C7D2B3DF20A006EDFBE /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C7C2B3DF20A006EDFBE /* UIView+Extension.swift */; };
 		B4AB3C802B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C7F2B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift */; };
 		B4AB3C862B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C852B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift */; };
+		B4C37EBD2B3F2DB500731635 /* NBDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B4C37EBB2B3F2DB500731635 /* NBDB.xcdatamodeld */; };
+		B4C37EC22B3F2F6D00731635 /* NBCDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37EC12B3F2F6D00731635 /* NBCDManager.swift */; };
+		B4C37EC42B3F319E00731635 /* NBNCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37EC32B3F319E00731635 /* NBNCManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +35,9 @@
 		B4AB3C7C2B3DF20A006EDFBE /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		B4AB3C7F2B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		B4AB3C852B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBButtonHeaderFooterView.swift; sourceTree = "<group>"; };
+		B4C37EBC2B3F2DB500731635 /* NBDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NBDB.xcdatamodel; sourceTree = "<group>"; };
+		B4C37EC12B3F2F6D00731635 /* NBCDManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCDManager.swift; sourceTree = "<group>"; };
+		B4C37EC32B3F319E00731635 /* NBNCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBNCManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +76,7 @@
 				B4AB3C7E2B3DF362006EDFBE /* Views */,
 				B4AB3C762B3DF156006EDFBE /* Controllers */,
 				B4AB3C7B2B3DF200006EDFBE /* Extensions */,
+				B4C37EC02B3F2F6000731635 /* Managers */,
 				B4AB3C682B3DEC10006EDFBE /* Assets.xcassets */,
 				B4AB3C6A2B3DEC10006EDFBE /* LaunchScreen.storyboard */,
 				B4AB3C6D2B3DEC10006EDFBE /* Info.plist */,
@@ -81,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				B4AB3C742B3DECA7006EDFBE /* NBTransaction.swift */,
+				B4C37EBB2B3F2DB500731635 /* NBDB.xcdatamodeld */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -109,6 +117,15 @@
 				B4AB3C852B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		B4C37EC02B3F2F6000731635 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				B4C37EC12B3F2F6D00731635 /* NBCDManager.swift */,
+				B4C37EC32B3F319E00731635 /* NBNCManager.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -183,7 +200,10 @@
 			files = (
 				B4AB3C802B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift in Sources */,
 				B4AB3C7D2B3DF20A006EDFBE /* UIView+Extension.swift in Sources */,
+				B4C37EBD2B3F2DB500731635 /* NBDB.xcdatamodeld in Sources */,
 				B4AB3C752B3DECA7006EDFBE /* NBTransaction.swift in Sources */,
+				B4C37EC42B3F319E00731635 /* NBNCManager.swift in Sources */,
+				B4C37EC22B3F2F6D00731635 /* NBCDManager.swift in Sources */,
 				B4AB3C602B3DEC0E006EDFBE /* AppDelegate.swift in Sources */,
 				B4AB3C782B3DF168006EDFBE /* NBTransactionsViewController.swift in Sources */,
 				B4AB3C622B3DEC0E006EDFBE /* SceneDelegate.swift in Sources */,
@@ -405,6 +425,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		B4C37EBB2B3F2DB500731635 /* NBDB.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				B4C37EBC2B3F2DB500731635 /* NBDB.xcdatamodel */,
+			);
+			currentVersion = B4C37EBC2B3F2DB500731635 /* NBDB.xcdatamodel */;
+			path = NBDB.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = B4AB3C542B3DEC0E006EDFBE /* Project object */;
 }

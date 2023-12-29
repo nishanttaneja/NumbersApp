@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol NBAddTransactionViewControllerDelegate: NSObjectProtocol {
-    func addTransaction(viewController: NBAddTransactionViewController, didAddTransaction newTransaction: NBTransaction)
-}
-
 final class NBAddTransactionViewController: UITableViewController, NBTextFieldTableViewCellDelegate, NBButtonHeaderFooterViewDataSource, NBButtonHeaderFooterViewDelegate {
     // MARK: Properties
     private let textFieldCellReuseIdentifier = "textFieldCell-NBAddTransactionViewController"
@@ -20,7 +16,6 @@ final class NBAddTransactionViewController: UITableViewController, NBTextFieldTa
     private let expenseTypes = NBTransaction.NBTransactionExpenseType.allCases
     private let paymentMethods = NBTransaction.NBTransactionPaymentMethod.allCases
     private var tempTransaction: NBTransaction.NBTempTransaction?
-    weak var delegate: NBAddTransactionViewControllerDelegate?
     
     func addNewTransaction() {
         tempTransaction = NBTransaction.NBTempTransaction()
@@ -116,7 +111,21 @@ final class NBAddTransactionViewController: UITableViewController, NBTextFieldTa
             present(alertController, animated: true)
             return
         }
-        delegate?.addTransaction(viewController: self, didAddTransaction: transaction)
+        NBCDManager.shared.saveTransaction(transaction) { [weak self] result in
+            switch result {
+            case .success(let success):
+                guard success else { return }
+                NBNCManager.shared.postNotification(name: .NBCDManagerDidSaveNewTransaction)
+            case .failure(let failure):
+                let alertController = UIAlertController(title: "Unable to save", message: failure.localizedDescription, preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
+                self?.present(alertController, animated: true)
+            }
+        }
         dismiss(animated: true)
+    }
+    
+    deinit {
+        debugPrint(#function, self)
     }
 }

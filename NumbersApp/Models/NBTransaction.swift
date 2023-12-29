@@ -66,7 +66,7 @@ struct NBTransaction {
         var amount: Double?
     }
     
-    let id: String
+    let id: UUID
     let date: Date
     let title: String
     let category: NBTransactionCategory
@@ -75,7 +75,7 @@ struct NBTransaction {
     let amount: Double
     
     // MARK: Constructor
-    init(id: String = UUID().uuidString, date: Date = .now, title: String, category: NBTransactionCategory, expenseType: NBTransactionExpenseType, paymentMethod: NBTransactionPaymentMethod, amount: Double) {
+    init(id: UUID = UUID(), date: Date = .now, title: String, category: NBTransactionCategory, expenseType: NBTransactionExpenseType, paymentMethod: NBTransactionPaymentMethod, amount: Double) {
         self.id = id
         self.date = date
         self.title = title
