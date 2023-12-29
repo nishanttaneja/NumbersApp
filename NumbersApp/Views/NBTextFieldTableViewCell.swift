@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NBTextFieldTableViewCellDelegate: NSObjectProtocol {
-    func textField(tableViewCell: UITableViewCell, didUpdateValueTo newValue: Any, usingPickerOptionAt index: Int?)
+    func textField(tableViewCell: NBTextFieldTableViewCell, didUpdateValueTo newValue: Any, usingPickerOptionAt index: Int?)
 }
 
 final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDelegate {
@@ -107,5 +107,21 @@ extension NBTextFieldTableViewCell {
     func setPickerValues(_ values: [String]) {
         self.values = values
         textField.inputView = pickerView
+    }
+}
+
+extension NBTextFieldTableViewCell {
+    func set(date: Date? = nil, title: String? = nil, valueIndex: Int? = nil, amount: Double? = nil) {
+        if let date {
+            datePicker.date = date
+            textField.text = date.formatted(date: .abbreviated, time: .omitted)
+        } else if let amount {
+            textField.text = String(amount)
+        } else if values.isEmpty {
+            textField.text = title
+        } else if let valueIndex, values.count > valueIndex {
+            pickerView.selectRow(valueIndex, inComponent: .zero, animated: true)
+            pickerView.delegate?.pickerView?(pickerView, didSelectRow: valueIndex, inComponent: .zero)
+        }
     }
 }
