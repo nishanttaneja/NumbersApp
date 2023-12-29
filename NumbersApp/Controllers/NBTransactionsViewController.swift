@@ -88,6 +88,7 @@ final class NBTransactionsViewController: UITableViewController {
         }
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return }
         let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
         if addTransactionViewController == nil {
