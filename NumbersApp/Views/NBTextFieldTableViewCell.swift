@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NBTextFieldTableViewCellDelegate: NSObjectProtocol {
-    func textField(tableViewCell: UITableViewCell, didUpdateValueTo newValue: Any, usingPickerOptionAt index: Int?)
+    func textField(tableViewCell: NBTextFieldTableViewCell, didUpdateValueTo newValue: Any, usingPickerOptionAt index: Int?)
 }
 
 final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDelegate {

@@ -9,14 +9,23 @@ import UIKit
 
 final class NBTransactionsViewController: UITableViewController {
     // MARK: Properties
-    private let defaultCellReuseIdentifier = "defaultCell-NBTransactionsViewController"
+    private let defaultCellReuseIdentifier = "transactionDetail-NBTransactionsViewController"
     private var transactions: [NBTransaction] = []
+    private var transactionsSeparatedByDate: [(dateString: String, transactions: [NBTransaction])] = []
     private var addTransactionViewController: NBAddTransactionViewController?
     
     private func updateTransactions(to newTransactions: [NBTransaction]) {
         DispatchQueue.main.async { [weak self] in
             self?.transactions = newTransactions
-            self?.tableView.reloadSections(.init(integer: .zero), with: .automatic)
+            self?.transactionsSeparatedByDate.removeAll()
+            for transaction in newTransactions {
+                if let indexOfDateForExistingTransactions = self?.transactionsSeparatedByDate.firstIndex(where: { $0.dateString == transaction.date.formatted(date: .abbreviated, time: .omitted) }) {
+                    self?.transactionsSeparatedByDate[indexOfDateForExistingTransactions].transactions.append(transaction)
+                } else {
+                    self?.transactionsSeparatedByDate.append((dateString: transaction.date.formatted(date: .abbreviated, time: .omitted), transactions: [transaction]))
+                }
+            }
+            self?.tableView.reloadData()
         }
     }
     private func loadTransactions() {
@@ -33,16 +42,25 @@ final class NBTransactionsViewController: UITableViewController {
     }
     
     // MARK: TableView
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        transactionsSeparatedByDate.count
+    }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        transactions.count
+        guard transactionsSeparatedByDate.count > section else { return .zero }
+        return transactionsSeparatedByDate[section].transactions.count
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: defaultCellReuseIdentifier, for: indexPath)
-        guard indexPath.row < transactions.count else { return cell }
-        let transaction = transactions[indexPath.row]
-        cell.textLabel?.text = transaction.title + " - ₹" + String(transaction.amount)
-        cell.detailTextLabel?.text = transaction.date.formatted(date: .abbreviated, time: .omitted)
+        guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return cell }
+        let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
+        cell.textLabel?.text = transaction.title
+        cell.textLabel?.numberOfLines = .zero
+        cell.detailTextLabel?.text = "₹ " + String(transaction.amount)
         return cell
+    }
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard transactionsSeparatedByDate.count > section else { return nil }
+        return transactionsSeparatedByDate[section].dateString
     }
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         true
@@ -53,8 +71,10 @@ final class NBTransactionsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
         case .delete:
-            guard indexPath.row < transactions.count else { return }
-            NBCDManager.shared.deleteTransaction(having: transactions[indexPath.row].id) { [weak self] result in
+
+            guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return }
+            let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
+            NBCDManager.shared.deleteTransaction(having: transaction.id) { [weak self] result in
                 switch result {
                 case .success(let success):
                     guard success else { return }
@@ -73,7 +93,9 @@ final class NBTransactionsViewController: UITableViewController {
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: defaultCellReuseIdentifier)
+        title = "Transactions"
+        tableView.register(NBTransactionDetailTableViewCell.self, forCellReuseIdentifier: defaultCellReuseIdentifier)
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.setRightBarButton(UIBarButtonItem(systemItem: .add, primaryAction: UIAction(handler: { _ in
             if self.addTransactionViewController == nil {
                 self.addTransactionViewController = NBAddTransactionViewController()

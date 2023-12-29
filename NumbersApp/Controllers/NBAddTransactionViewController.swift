@@ -74,7 +74,7 @@ final class NBAddTransactionViewController: UITableViewController, NBTextFieldTa
     
     
     // MARK: CellDelegate
-    func textField(tableViewCell: UITableViewCell, didUpdateValueTo newValue: Any, usingPickerOptionAt index: Int?) {
+    func textField(tableViewCell: NBTextFieldTableViewCell, didUpdateValueTo newValue: Any, usingPickerOptionAt index: Int?) {
         guard let row = tableView.indexPath(for: tableViewCell)?.row, row < fields.count else { return }
         let field = fields[row]
         switch field {
