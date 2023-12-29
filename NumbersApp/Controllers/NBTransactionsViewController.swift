@@ -12,7 +12,7 @@ final class NBTransactionsViewController: UITableViewController {
     private let defaultCellReuseIdentifier = "transactionDetail-NBTransactionsViewController"
     private var transactions: [NBTransaction] = []
     private var transactionsSeparatedByDate: [(dateString: String, transactions: [NBTransaction])] = []
-    private var addTransactionViewController: NBAddTransactionViewController?
+    private var addTransactionViewController: NBTransactionDetailViewController?
     
     private func updateTransactions(to newTransactions: [NBTransaction]) {
         DispatchQueue.main.async { [weak self] in
@@ -71,7 +71,6 @@ final class NBTransactionsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
         case .delete:
-
             guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return }
             let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
             NBCDManager.shared.deleteTransaction(having: transaction.id) { [weak self] result in
@@ -88,6 +87,16 @@ final class NBTransactionsViewController: UITableViewController {
         default: break
         }
     }
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return }
+        let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
+        if addTransactionViewController == nil {
+            addTransactionViewController = NBTransactionDetailViewController()
+        }
+        addTransactionViewController?.loadTransaction(having: transaction.id)
+        guard let addTransactionViewController else { return }
+        present(UINavigationController(rootViewController: addTransactionViewController), animated: true)
+    }
     
     
     // MARK: Lifecycle
@@ -98,19 +107,19 @@ final class NBTransactionsViewController: UITableViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.setRightBarButton(UIBarButtonItem(systemItem: .add, primaryAction: UIAction(handler: { _ in
             if self.addTransactionViewController == nil {
-                self.addTransactionViewController = NBAddTransactionViewController()
+                self.addTransactionViewController = NBTransactionDetailViewController()
             } else {
                 self.addTransactionViewController?.addNewTransaction()
             }
             guard let addTransactionViewController = self.addTransactionViewController else { return }
-            self.present(addTransactionViewController, animated: true)
+            self.present(UINavigationController(rootViewController: addTransactionViewController), animated: true)
         })), animated: true)
         loadTransactions()
         addNotificationObservers()
     }
     
     // MARK: AddTransactionDelegate
-    func addTransaction(viewController: NBAddTransactionViewController, didAddTransaction newTransaction: NBTransaction) {
+    func addTransaction(viewController: NBTransactionDetailViewController, didAddTransaction newTransaction: NBTransaction) {
         transactions.insert(newTransaction, at: .zero)
         tableView.insertRows(at: [IndexPath(row: .zero, section: .zero)], with: .automatic)
     }

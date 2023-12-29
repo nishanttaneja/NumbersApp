@@ -13,7 +13,7 @@
 		B4AB3C6C2B3DEC10006EDFBE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B4AB3C6A2B3DEC10006EDFBE /* LaunchScreen.storyboard */; };
 		B4AB3C752B3DECA7006EDFBE /* NBTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C742B3DECA7006EDFBE /* NBTransaction.swift */; };
 		B4AB3C782B3DF168006EDFBE /* NBTransactionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C772B3DF168006EDFBE /* NBTransactionsViewController.swift */; };
-		B4AB3C7A2B3DF17A006EDFBE /* NBAddTransactionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C792B3DF17A006EDFBE /* NBAddTransactionViewController.swift */; };
+		B4AB3C7A2B3DF17A006EDFBE /* NBTransactionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C792B3DF17A006EDFBE /* NBTransactionDetailViewController.swift */; };
 		B4AB3C7D2B3DF20A006EDFBE /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C7C2B3DF20A006EDFBE /* UIView+Extension.swift */; };
 		B4AB3C802B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C7F2B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift */; };
 		B4AB3C862B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C852B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift */; };
@@ -21,6 +21,7 @@
 		B4C37EC22B3F2F6D00731635 /* NBCDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37EC12B3F2F6D00731635 /* NBCDManager.swift */; };
 		B4C37EC42B3F319E00731635 /* NBNCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37EC32B3F319E00731635 /* NBNCManager.swift */; };
 		B4C37EC62B3F3F3F00731635 /* NBTransactionDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37EC52B3F3F3F00731635 /* NBTransactionDetailTableViewCell.swift */; };
+		B4C37ECC2B3F543D00731635 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37ECB2B3F543D00731635 /* Date+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,7 +33,7 @@
 		B4AB3C6D2B3DEC10006EDFBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B4AB3C742B3DECA7006EDFBE /* NBTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTransaction.swift; sourceTree = "<group>"; };
 		B4AB3C772B3DF168006EDFBE /* NBTransactionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTransactionsViewController.swift; sourceTree = "<group>"; };
-		B4AB3C792B3DF17A006EDFBE /* NBAddTransactionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBAddTransactionViewController.swift; sourceTree = "<group>"; };
+		B4AB3C792B3DF17A006EDFBE /* NBTransactionDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTransactionDetailViewController.swift; sourceTree = "<group>"; };
 		B4AB3C7C2B3DF20A006EDFBE /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		B4AB3C7F2B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		B4AB3C852B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBButtonHeaderFooterView.swift; sourceTree = "<group>"; };
@@ -40,6 +41,7 @@
 		B4C37EC12B3F2F6D00731635 /* NBCDManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCDManager.swift; sourceTree = "<group>"; };
 		B4C37EC32B3F319E00731635 /* NBNCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBNCManager.swift; sourceTree = "<group>"; };
 		B4C37EC52B3F3F3F00731635 /* NBTransactionDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTransactionDetailTableViewCell.swift; sourceTree = "<group>"; };
+		B4C37ECB2B3F543D00731635 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,7 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				B4AB3C772B3DF168006EDFBE /* NBTransactionsViewController.swift */,
-				B4AB3C792B3DF17A006EDFBE /* NBAddTransactionViewController.swift */,
+				B4AB3C792B3DF17A006EDFBE /* NBTransactionDetailViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -108,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				B4AB3C7C2B3DF20A006EDFBE /* UIView+Extension.swift */,
+				B4C37ECB2B3F543D00731635 /* Date+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -203,6 +206,7 @@
 			files = (
 				B4AB3C802B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift in Sources */,
 				B4C37EC62B3F3F3F00731635 /* NBTransactionDetailTableViewCell.swift in Sources */,
+				B4C37ECC2B3F543D00731635 /* Date+Extension.swift in Sources */,
 				B4AB3C7D2B3DF20A006EDFBE /* UIView+Extension.swift in Sources */,
 				B4C37EBD2B3F2DB500731635 /* NBDB.xcdatamodeld in Sources */,
 				B4AB3C752B3DECA7006EDFBE /* NBTransaction.swift in Sources */,
@@ -212,7 +216,7 @@
 				B4AB3C782B3DF168006EDFBE /* NBTransactionsViewController.swift in Sources */,
 				B4AB3C622B3DEC0E006EDFBE /* SceneDelegate.swift in Sources */,
 				B4AB3C862B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift in Sources */,
-				B4AB3C7A2B3DF17A006EDFBE /* NBAddTransactionViewController.swift in Sources */,
+				B4AB3C7A2B3DF17A006EDFBE /* NBTransactionDetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

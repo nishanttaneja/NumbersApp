@@ -32,6 +32,7 @@ final class NBCDManager {
 extension NBCDManager {
     func saveTransaction(_ newTransaction: NBTransaction, completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
         persistentContainer.performBackgroundTask { context in
+            context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
             let transaction = NBCDTransaction(context: context)
             transaction.transactionID = newTransaction.id
             transaction.date = newTransaction.date

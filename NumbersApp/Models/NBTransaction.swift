@@ -58,6 +58,7 @@ struct NBTransaction {
     
     // MARK: Temp
     struct NBTempTransaction {
+        var id: UUID?
         var date: Date?
         var title: String?
         var category: NBTransactionCategory?
@@ -132,6 +133,10 @@ extension NBTransaction.NBTransactionField {
 extension NBTransaction.NBTempTransaction {
     func getTransaction() -> NBTransaction? {
         guard let title, let category, let expenseType, let paymentMethod, let amount else { return nil }
-        return NBTransaction(date: date ?? .now, title: title, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: amount)
+        return NBTransaction(id: id ?? UUID(), date: date ?? .now, title: title, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: amount)
+    }
+    
+    init(transaction: NBTransaction) {
+        self.init(id: transaction.id, date: transaction.date, title: transaction.title, category: transaction.category, expenseType: transaction.expenseType, paymentMethod: transaction.paymentMethod, amount: transaction.amount)
     }
 }
