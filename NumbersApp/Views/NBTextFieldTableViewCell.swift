@@ -27,6 +27,18 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
     private let pickerView = UIPickerView()
     private let datePicker = UIDatePicker()
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        isDatePicker = false
+        textField.text = nil
+        textField.inputView = nil
+        textField.keyboardType = .asciiCapable
+        textField.placeholder = nil
+        delegate = nil
+        values.removeAll()
+        datePicker.date = .now
+    }
+    
     // MARK: PickerView
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         1
@@ -69,7 +81,7 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
         }), for: .valueChanged)
     }
     private func configDatePicker() {
-        textField.inputView = datePicker
+        textField.inputView = isDatePicker ? datePicker : nil
     }
     
     // MARK: Constructors

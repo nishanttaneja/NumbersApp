@@ -35,6 +35,8 @@ final class NBTransactionsViewController: UITableViewController, NBAddTransactio
             if self.addTransactionViewController == nil {
                 self.addTransactionViewController = NBAddTransactionViewController()
                 self.addTransactionViewController?.delegate = self
+            } else {
+                self.addTransactionViewController?.addNewTransaction()
             }
             guard let addTransactionViewController = self.addTransactionViewController else { return }
             self.present(addTransactionViewController, animated: true)

@@ -19,8 +19,18 @@ final class NBAddTransactionViewController: UITableViewController, NBTextFieldTa
     private let categories = NBTransaction.NBTransactionCategory.allCases
     private let expenseTypes = NBTransaction.NBTransactionExpenseType.allCases
     private let paymentMethods = NBTransaction.NBTransactionPaymentMethod.allCases
-    private var tempTransaction = NBTransaction.NBTempTransaction()
+    private var tempTransaction: NBTransaction.NBTempTransaction?
     weak var delegate: NBAddTransactionViewControllerDelegate?
+    
+    func addNewTransaction() {
+        tempTransaction = NBTransaction.NBTempTransaction()
+        tableView.reloadData()
+    }
+    func addNewTransactionIfNeeded() {
+        guard tempTransaction == nil else { return }
+        tempTransaction = NBTransaction.NBTempTransaction()
+    }
+    
     
     // MARK: Lifecycle
     override func viewDidLoad() {
@@ -30,6 +40,7 @@ final class NBAddTransactionViewController: UITableViewController, NBTextFieldTa
         tableView.rowHeight = 44
         tableView.sectionFooterHeight = 80
         tableView.keyboardDismissMode = .onDrag
+        addNewTransactionIfNeeded()
     }
     
     // MARK: TableView
@@ -73,23 +84,23 @@ final class NBAddTransactionViewController: UITableViewController, NBTextFieldTa
         let field = fields[row]
         switch field {
         case .date:
-            tempTransaction.date = newValue as? Date
+            tempTransaction?.date = newValue as? Date
         case .title:
-            tempTransaction.title = newValue as? String
+            tempTransaction?.title = newValue as? String
         case .category:
             guard let index, index < categories.count else { return }
             let category = categories[index]
-            tempTransaction.category = category
+            tempTransaction?.category = category
         case .expenseType:
             guard let index, index < expenseTypes.count else { return }
             let expenseType = expenseTypes[index]
-            tempTransaction.expenseType = expenseType
+            tempTransaction?.expenseType = expenseType
         case .paymentMethod:
             guard let index, index < paymentMethods.count else { return }
             let paymentMethod = paymentMethods[index]
-            tempTransaction.paymentMethod = paymentMethod
+            tempTransaction?.paymentMethod = paymentMethod
         case .amount:
-            tempTransaction.amount = newValue as? Double
+            tempTransaction?.amount = newValue as? Double
         }
     }
     
@@ -99,7 +110,7 @@ final class NBAddTransactionViewController: UITableViewController, NBTextFieldTa
     }
     // MARK: FooterDelegate
     func didSelectButtonView(_ headerFooterView: NBButtonHeaderFooterView) {
-        guard let transaction = tempTransaction.getTransaction() else {
+        guard let transaction = tempTransaction?.getTransaction() else {
             let alertController = UIAlertController(title: "Unable to save", message: "Please provide more information to save.", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
             present(alertController, animated: true)
