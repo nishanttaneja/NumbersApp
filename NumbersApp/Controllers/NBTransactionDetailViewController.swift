@@ -28,6 +28,7 @@ final class NBTransactionDetailViewController: UITableViewController, NBTextFiel
     
     // MARK: Views
     private let saveTransactionButton = UIButton()
+    private var deleteTransactionBarButtonItem: UIBarButtonItem?
     
     private func toggleSaveTransactionButtonIfNeeded() {
         saveTransactionButton.isEnabled = allowSave
@@ -45,7 +46,7 @@ final class NBTransactionDetailViewController: UITableViewController, NBTextFiel
                 switch result {
                 case .success(let success):
                     guard success else { return }
-                    NBNCManager.shared.postNotification(name: .NBCDManagerDidSaveNewTransaction)
+                    NBNCManager.shared.postNotification(name: .NBCDManagerDidUpdateTransaction)
                     self?.dismiss(animated: true)
                 case .failure(let failure):
                     let alertController = UIAlertController(title: "Unable to save", message: failure.localizedDescription, preferredStyle: .alert)
@@ -79,6 +80,34 @@ final class NBTransactionDetailViewController: UITableViewController, NBTextFiel
         tableView.keyboardDismissMode = .onDrag
         addNewTransaction()
         configViews()
+        configNavigationItem()
+    }
+    private func configNavigationItem() {
+        deleteTransactionBarButtonItem = UIBarButtonItem(systemItem: .trash, primaryAction: UIAction(handler: { [weak self] _ in
+            guard let transactionID = self?.transaction?.id else { return }
+            NBCDManager.shared.deleteTransaction(having: transactionID) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let success):
+                        guard success else { return }
+                        let alertController = UIAlertController(title: "Transaction Deleted Successfully.", message: nil, preferredStyle: .alert)
+                        self?.present(alertController, animated: true, completion: {
+                            DispatchQueue.main.asyncAfter(deadline: .now()+0.4) {
+                                NBNCManager.shared.postNotification(name: .NBCDManagerDidUpdateTransaction)
+                                alertController.dismiss(animated: true) {
+                                    self?.dismiss(animated: true)
+                                }
+                            }
+                        })
+                    case .failure(let failure):
+                        let alertController = UIAlertController(title: "Unable to delete transaction", message: failure.localizedDescription, preferredStyle: .alert)
+                        alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
+                        self?.present(alertController, animated: true)
+                    }
+                }
+            }
+        }))
+        deleteTransactionBarButtonItem?.tintColor = .systemRed
     }
     
     // MARK: TableView
@@ -151,6 +180,7 @@ final class NBTransactionDetailViewController: UITableViewController, NBTextFiel
 extension NBTransactionDetailViewController {
     func addNewTransaction() {
         tempTransaction = NBTransaction.NBTempTransaction()
+        navigationItem.setLeftBarButton(nil, animated: true)
         tableView.reloadData()
     }
     func loadTransaction(having id: UUID) {
@@ -160,6 +190,7 @@ extension NBTransactionDetailViewController {
                 case .success(let transaction):
                     self?.transaction = transaction
                     self?.tempTransaction = .init(transaction: transaction)
+                    self?.navigationItem.setLeftBarButton(self?.deleteTransactionBarButtonItem, animated: true)
                     self?.tableView.reloadData()
                 case .failure(let failure):
                     let alertController = UIAlertController(title: "Unable to load transaction", message: failure.localizedDescription, preferredStyle: .alert)

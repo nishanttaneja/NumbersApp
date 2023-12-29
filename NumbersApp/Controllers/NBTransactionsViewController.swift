@@ -129,9 +129,9 @@ final class NBTransactionsViewController: UITableViewController {
         loadTransactions()
     }
     private func addNotificationObservers() {
-        NBNCManager.shared.addObserver(self, selector: #selector(handleSaveNewTransaction(notification:)), forNotification: .NBCDManagerDidSaveNewTransaction)
+        NBNCManager.shared.addObserver(self, selector: #selector(handleSaveNewTransaction(notification:)), forNotification: .NBCDManagerDidUpdateTransaction)
     }
     private func removeNotificationObservers() {
-        NBNCManager.shared.removeObserver(self, forNotification: .NBCDManagerDidSaveNewTransaction)
+        NBNCManager.shared.removeObserver(self, forNotification: .NBCDManagerDidUpdateTransaction)
     }
 }
