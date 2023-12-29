@@ -44,6 +44,30 @@ final class NBTransactionsViewController: UITableViewController {
         cell.detailTextLabel?.text = transaction.date.formatted(date: .abbreviated, time: .omitted)
         return cell
     }
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        true
+    }
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        .delete
+    }
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        switch editingStyle {
+        case .delete:
+            guard indexPath.row < transactions.count else { return }
+            NBCDManager.shared.deleteTransaction(having: transactions[indexPath.row].id) { [weak self] result in
+                switch result {
+                case .success(let success):
+                    guard success else { return }
+                    self?.loadTransactions()
+                case .failure(let failure):
+                    let alertController = UIAlertController(title: "Unable to delete transaction", message: failure.localizedDescription, preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
+                    self?.present(alertController, animated: true)
+                }
+            }
+        default: break
+        }
+    }
     
     
     // MARK: Lifecycle
