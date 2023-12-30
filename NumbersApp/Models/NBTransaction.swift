@@ -56,6 +56,11 @@ struct NBTransaction {
         case amount
     }
     
+    // MARK: TransactionType
+    enum NBTransactionType: String, CaseIterable {
+        case credit, debit
+    }
+    
     // MARK: Temp
     struct NBTempTransaction {
         var id: UUID?
@@ -111,6 +116,7 @@ extension NBTransaction.NBTransactionPaymentMethod {
     }
 }
 
+
 // MARK: - Field
 extension NBTransaction.NBTransactionField {
     var title: String {
@@ -128,6 +134,15 @@ extension NBTransaction.NBTransactionField {
         }
     }
 }
+
+
+// MARK: - TransactionType
+extension NBTransaction.NBTransactionType {
+    var title: String {
+        rawValue.capitalized
+    }
+}
+
 
 // MARK: - TempTransaction
 extension NBTransaction.NBTempTransaction {
