@@ -38,20 +38,29 @@ extension NBCDManager {
     func saveTransaction(_ newTransaction: NBTransaction, completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
         persistentContainer.performBackgroundTask { context in
             context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-            let transaction = NBCDTransaction(context: context)
-            transaction.transactionID = newTransaction.id
-            transaction.date = newTransaction.date
-            transaction.title = newTransaction.title
-            transaction.transactionType = newTransaction.transactionType.rawValue
-            transaction.category = newTransaction.category.rawValue
-            transaction.expenseType = newTransaction.expenseType.rawValue
-            transaction.amount = newTransaction.amount
-            // Add to Payment Method
-            let paymentMethod = NBCDTransactionPaymentMethod(context: context)
-            paymentMethod.paymentMethodID = newTransaction.paymentMethod.id
-            paymentMethod.title = newTransaction.paymentMethod.title
-            paymentMethod.addToTransactions(transaction)
             do {
+                // Creating Transaction
+                let transaction = NBCDTransaction(context: context)
+                transaction.transactionID = newTransaction.id
+                transaction.date = newTransaction.date
+                transaction.title = newTransaction.title
+                transaction.transactionType = newTransaction.transactionType.rawValue
+                transaction.category = newTransaction.category.rawValue
+                transaction.expenseType = newTransaction.expenseType.rawValue
+                transaction.amount = newTransaction.amount
+                // Fetching Payment Method
+                let request = NBCDTransactionPaymentMethod.fetchRequest()
+                request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.paymentMethodID), newTransaction.paymentMethod.id as CVarArg)
+                if let paymentMethod = try context.fetch(request).first {
+                    // Adding to Payment Method
+                    paymentMethod.addToTransactions(transaction)
+                } else {
+                    // Creating new Payment Method
+                    let paymentMethod = NBCDTransactionPaymentMethod(context: context)
+                    paymentMethod.paymentMethodID = newTransaction.paymentMethod.id
+                    paymentMethod.title = newTransaction.paymentMethod.title
+                    paymentMethod.addToTransactions(transaction)
+                }
                 if context.hasChanges {
                     try context.save()
                     completionHandler(.success(true))
@@ -133,6 +142,34 @@ extension NBCDManager {
                 completionHandler(.failure(error))
             }
         }
-        
     }
+}
+
+
+// MARK: - PaymentMethod
+extension NBCDManager {
+    func loadAllPaymentMethods(completionHandler: @escaping (_ result: Result<[NBTransaction.NBTransactionPaymentMethod], Error>) -> Void) {
+        do {
+            let request = NBCDTransactionPaymentMethod.fetchRequest()
+            let savedPaymentMethods = try persistentContainer.viewContext.fetch(request)
+            let paymentMethodsToDisplay: [NBTransaction.NBTransactionPaymentMethod] = savedPaymentMethods.compactMap { savedPaymentMethod in
+                guard let id = savedPaymentMethod.paymentMethodID,
+                      let title = savedPaymentMethod.title,
+                      let transactions: [NBTransaction] = (savedPaymentMethod.transactions?.allObjects as? [NBCDTransaction])?.compactMap({ savedTransaction in
+                          guard let transactionId = savedTransaction.transactionID,
+                                let date = savedTransaction.date,
+                                let title = savedTransaction.title,
+                                let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
+                                let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
+                                let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue) else  { return nil }
+                          return NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: .init(id: id, title: title, transactions: []), amount: savedTransaction.amount)
+                      }) else { return nil }
+                return NBTransaction.NBTransactionPaymentMethod(id: id, title: title, transactions: transactions)
+            }
+            completionHandler(.success(paymentMethodsToDisplay))
+        } catch let error {
+            completionHandler(.failure(error))
+        }
+    }
+    
 }

@@ -29,10 +29,12 @@ struct NBTransaction {
     struct NBTransactionPaymentMethod: Equatable {
         let id: UUID
         let title: String
+        let transactions: [NBTransaction]
         
-        init(id: UUID = UUID(), title: String) {
+        init(id: UUID = UUID(), title: String, transactions: [NBTransaction] = []) {
             self.id = id
             self.title = title
+            self.transactions = transactions
         }
         
         static func == (lhs: Self, rhs: Self) -> Bool {
@@ -142,5 +144,21 @@ extension NBTransaction.NBTempTransaction {
     
     init(transaction: NBTransaction) {
         self.init(id: transaction.id, date: transaction.date, title: transaction.title, transactionType: transaction.transactionType, category: transaction.category, expenseType: transaction.expenseType, paymentMethod: transaction.paymentMethod, amount: transaction.amount)
+    }
+}
+
+
+// MARK: - PaymentMethod
+extension NBTransaction.NBTransactionPaymentMethod {
+    func getTotalAmount(for transactionType: NBTransaction.NBTransactionType? = nil) -> Double {
+        let transactions: [NBTransaction]
+        if let transactionType {
+            transactions = self.transactions.filter({ $0.transactionType == transactionType })
+        } else {
+            transactions = self.transactions
+        }
+        return transactions.reduce(.zero) { partialResult, transaction in
+            partialResult + transaction.amount
+        }
     }
 }

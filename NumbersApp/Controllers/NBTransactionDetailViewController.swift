@@ -133,6 +133,7 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
         addNewTransaction()
         configViews()
         configNavigationItem()
+        loadPaymentMethods()
     }
     private func configNavigationItem() {
         deleteTransactionBarButtonItem = UIBarButtonItem(systemItem: .trash, primaryAction: UIAction(handler: { [weak self] _ in
@@ -180,17 +181,17 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
             textFieldCell.setKeyboardType(.asciiCapable)
             textFieldCell.set(title: tempTransaction?.title)
         case .category:
-            textFieldCell.setPickerValues(categories.compactMap({ $0.title }))
+            textFieldCell.setPickerValues(categories.compactMap({ (key: $0.rawValue, value: $0.title) }))
             if let category = tempTransaction?.category {
                 textFieldCell.set(valueIndex: categories.firstIndex(of: category))
             }
         case .expenseType:
-            textFieldCell.setPickerValues(expenseTypes.compactMap({ $0.title }))
+            textFieldCell.setPickerValues(expenseTypes.compactMap({ (key: $0.rawValue, value: $0.title) }))
             if let expenseType = tempTransaction?.expenseType {
                 textFieldCell.set(valueIndex: expenseTypes.firstIndex(of: expenseType))
             }
         case .paymentMethod:
-            textFieldCell.setPickerValues(paymentMethods.compactMap({ $0.title }))
+            textFieldCell.setPickerValues(paymentMethods.compactMap({ (key: $0.id.uuidString, value: $0.title) }))
             if let paymentMethod = tempTransaction?.paymentMethod {
                 textFieldCell.set(valueIndex: paymentMethods.firstIndex(of: paymentMethod))
             }
@@ -258,5 +259,20 @@ extension NBTransactionDetailViewController {
             }
         }
     }
-
+    private func loadPaymentMethods() {
+        NBCDManager.shared.loadAllPaymentMethods { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let savedPaymentMethods):
+                    self?.paymentMethods = savedPaymentMethods
+                    guard let index = self?.fields.firstIndex(of: .paymentMethod) else { return }
+                    self?.transactionFieldsView.reloadRows(at: [IndexPath(row: index, section: .zero)], with: .automatic)
+                case .failure(let failure):
+                    let alertController = UIAlertController(title: "Unable to load payment methods", message: failure.localizedDescription, preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
+                    self?.present(alertController, animated: true)
+                }
+            }
+        }
+    }
 }

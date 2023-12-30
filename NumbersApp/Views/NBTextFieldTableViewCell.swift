@@ -16,7 +16,7 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
     private let textFieldInsets = UIEdgeInsets(top: .zero, left: 16, bottom: .zero, right: 16)
     private let textField = UITextField()
     weak var delegate: NBTextFieldTableViewCellDelegate?
-    private var values: [String] = []
+    private var values: [(key: String, value: String)] = []
     var isDatePicker: Bool = false {
         didSet {
             configDatePicker()
@@ -48,13 +48,13 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
     }
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         guard values.count > row else { return nil }
-        return values[row]
+        return values[row].value
     }
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         guard values.count > row else { return }
-        let text = values[row]
-        textField.text = text
-        delegate?.textField(tableViewCell: self, didUpdateValueTo: text, usingPickerOptionAt: row)
+        let value = values[row]
+        textField.text = value.value
+        delegate?.textField(tableViewCell: self, didUpdateValueTo: value.key, usingPickerOptionAt: row)
     }
     
     // MARK: Configurations
@@ -104,7 +104,7 @@ extension NBTextFieldTableViewCell {
     func setKeyboardType(_ keyboardType: UIKeyboardType) {
         textField.keyboardType = keyboardType
     }
-    func setPickerValues(_ values: [String]) {
+    func setPickerValues(_ values: [(key: String, value: String)]) {
         self.values = values
         textField.inputView = pickerView
     }
