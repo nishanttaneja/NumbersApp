@@ -26,8 +26,12 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
     }
     private let saveButtonInsets = UIEdgeInsets(top: .zero, left: 16, bottom: 8, right: 16)
     private let insetsForTransactionFieldsView = UIEdgeInsets(top: .zero, left: .zero, bottom: 8, right: .zero)
+    private let allowedTransactionTypes = NBTransaction.NBTransactionType.allCases
+    private var currentTransactionType: NBTransaction.NBTransactionType = .debit
+    private let insetsForTransactionTypeSegmentedControl = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
     
     // MARK: Views
+    private let transactionTypeSegmentedControl = UISegmentedControl()
     private let transactionFieldsView = UITableView(frame: .zero, style: .plain)
     private let saveTransactionButton = UIButton()
     private var deleteTransactionBarButtonItem: UIBarButtonItem?
@@ -60,6 +64,21 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
     }
     
     // MARK: Configurations
+    private func configTransactionTypeSegmentedControl() {
+        allowedTransactionTypes.reversed().forEach { transactionType in
+            transactionTypeSegmentedControl.insertSegment(action: UIAction(title: transactionType.title, handler: { _ in
+                guard transactionType != self.currentTransactionType else { return }
+                switch transactionType {
+                case .debit:
+                    self.currentTransactionType = .debit
+                case .credit:
+                    self.currentTransactionType = .credit
+                }
+                self.transactionFieldsView.reloadSections(.init(integer: .zero), with: .automatic)
+            }), at: .zero, animated: true)
+        }
+        
+    }
     private func configTableView() {
         transactionFieldsView.dataSource = self
         transactionFieldsView.delegate = self
@@ -75,15 +94,22 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
     }
     private func configViews() {
         view.backgroundColor = transactionFieldsView.backgroundColor
+        configTransactionTypeSegmentedControl()
         configTableView()
         configSaveTransactionButton()
+        transactionTypeSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(transactionTypeSegmentedControl)
         transactionFieldsView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(transactionFieldsView)
         saveTransactionButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(saveTransactionButton)
         NSLayoutConstraint.activate([
-            // Table View
-            transactionFieldsView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: insetsForTransactionFieldsView.top),
+            // Transaction Type
+            transactionTypeSegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: insetsForTransactionTypeSegmentedControl.top),
+            transactionTypeSegmentedControl.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: insetsForTransactionTypeSegmentedControl.left),
+            transactionTypeSegmentedControl.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -insetsForTransactionTypeSegmentedControl.right),
+            // Transaction Fields View
+            transactionFieldsView.topAnchor.constraint(equalTo: transactionTypeSegmentedControl.bottomAnchor, constant: insetsForTransactionTypeSegmentedControl.bottom),
             transactionFieldsView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: insetsForTransactionFieldsView.left),
             transactionFieldsView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -insetsForTransactionFieldsView.right),
             // Save Transaction Button
@@ -139,7 +165,7 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
         let cell = tableView.dequeueReusableCell(withIdentifier: textFieldCellReuseIdentifier, for: indexPath)
         guard let textFieldCell = cell as? NBTextFieldTableViewCell, fields.count > indexPath.row else { return cell }
         let transactionField = fields[indexPath.row]
-        textFieldCell.setPlaceholder(transactionField.title)
+        textFieldCell.setPlaceholder(transactionField.getTitle(for: currentTransactionType))
         textFieldCell.delegate = self
         switch transactionField {
         case .date:

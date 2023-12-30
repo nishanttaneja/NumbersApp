@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B40462912B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40462902B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift */; };
+		B40462932B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = B40462922B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel */; };
 		B4AB3C602B3DEC0E006EDFBE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C5F2B3DEC0E006EDFBE /* AppDelegate.swift */; };
 		B4AB3C622B3DEC0E006EDFBE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C612B3DEC0E006EDFBE /* SceneDelegate.swift */; };
 		B4AB3C692B3DEC10006EDFBE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4AB3C682B3DEC10006EDFBE /* Assets.xcassets */; };
@@ -25,6 +27,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B404628E2B3FE6E2009D669C /* NBDB v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NBDB v2.xcdatamodel"; sourceTree = "<group>"; };
+		B40462902B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCDTransactionTypeMigrationPolicy.swift; sourceTree = "<group>"; };
+		B40462922B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = NBCDTransactionTypeMappingModel.xcmappingmodel; sourceTree = "<group>"; };
 		B4AB3C5C2B3DEC0E006EDFBE /* NumbersApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NumbersApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4AB3C5F2B3DEC0E006EDFBE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B4AB3C612B3DEC0E006EDFBE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -55,6 +60,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B404628F2B3FE754009D669C /* Persistent Storage */ = {
+			isa = PBXGroup;
+			children = (
+				B40462922B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel */,
+				B4C37EC12B3F2F6D00731635 /* NBCDManager.swift */,
+				B40462902B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift */,
+			);
+			path = "Persistent Storage";
+			sourceTree = "<group>";
+		};
 		B4AB3C532B3DEC0E006EDFBE = {
 			isa = PBXGroup;
 			children = (
@@ -128,7 +143,7 @@
 		B4C37EC02B3F2F6000731635 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				B4C37EC12B3F2F6D00731635 /* NBCDManager.swift */,
+				B404628F2B3FE754009D669C /* Persistent Storage */,
 				B4C37EC32B3F319E00731635 /* NBNCManager.swift */,
 			);
 			path = Managers;
@@ -209,6 +224,8 @@
 				B4C37ECC2B3F543D00731635 /* Date+Extension.swift in Sources */,
 				B4AB3C7D2B3DF20A006EDFBE /* UIView+Extension.swift in Sources */,
 				B4C37EBD2B3F2DB500731635 /* NBDB.xcdatamodeld in Sources */,
+				B40462932B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel in Sources */,
+				B40462912B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift in Sources */,
 				B4AB3C752B3DECA7006EDFBE /* NBTransaction.swift in Sources */,
 				B4C37EC42B3F319E00731635 /* NBNCManager.swift in Sources */,
 				B4C37EC22B3F2F6D00731635 /* NBCDManager.swift in Sources */,
@@ -438,9 +455,10 @@
 		B4C37EBB2B3F2DB500731635 /* NBDB.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				B404628E2B3FE6E2009D669C /* NBDB v2.xcdatamodel */,
 				B4C37EBC2B3F2DB500731635 /* NBDB.xcdatamodel */,
 			);
-			currentVersion = B4C37EBC2B3F2DB500731635 /* NBDB.xcdatamodel */;
+			currentVersion = B404628E2B3FE6E2009D669C /* NBDB v2.xcdatamodel */;
 			path = NBDB.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
