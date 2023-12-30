@@ -66,7 +66,7 @@ struct NBTransaction {
         var id: UUID?
         var date: Date?
         var title: String?
-        var transactionType: NBTransactionType?
+        var transactionType: NBTransactionType = .debit
         var category: NBTransactionCategory?
         var expenseType: NBTransactionExpenseType?
         var paymentMethod: NBTransactionPaymentMethod?
@@ -151,7 +151,7 @@ extension NBTransaction.NBTransactionType {
 // MARK: - TempTransaction
 extension NBTransaction.NBTempTransaction {
     func getTransaction() -> NBTransaction? {
-        guard let title, let transactionType, let category, let expenseType, let paymentMethod, let amount else { return nil }
+        guard let title, let category, let expenseType, let paymentMethod, let amount else { return nil }
         return NBTransaction(id: id ?? UUID(), date: date ?? .now, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: amount)
     }
     

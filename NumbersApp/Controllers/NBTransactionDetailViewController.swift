@@ -18,11 +18,11 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
     private var tempTransaction: NBTransaction.NBTempTransaction?
     private var transaction: NBTransaction?
     private var allowSave: Bool {
-        tempTransaction?.date != nil && tempTransaction?.title?.replacingOccurrences(of: " ", with: "").isEmpty == false && tempTransaction?.category != nil && tempTransaction?.expenseType != nil && tempTransaction?.paymentMethod != nil && tempTransaction?.amount != nil && hasChanges
+        tempTransaction?.date != nil && tempTransaction?.title?.replacingOccurrences(of: " ", with: "").isEmpty == false && tempTransaction?.category != nil && tempTransaction?.expenseType != nil && tempTransaction?.paymentMethod != nil && tempTransaction?.amount != nil && tempTransaction?.transactionType != nil && hasChanges
     }
     private var hasChanges: Bool {
         guard let transaction else { return true }
-        return transaction.date.startOfDay != tempTransaction?.date?.startOfDay || transaction.title != tempTransaction?.title || transaction.category != tempTransaction?.category || transaction.expenseType != tempTransaction?.expenseType || transaction.paymentMethod != tempTransaction?.paymentMethod || transaction.amount != tempTransaction?.amount
+        return transaction.date.startOfDay != tempTransaction?.date?.startOfDay || transaction.title != tempTransaction?.title || transaction.category != tempTransaction?.category || transaction.expenseType != tempTransaction?.expenseType || transaction.paymentMethod != tempTransaction?.paymentMethod || transaction.amount != tempTransaction?.amount || transaction.transactionType != tempTransaction?.transactionType
     }
     private let saveButtonInsets = UIEdgeInsets(top: .zero, left: 16, bottom: 8, right: 16)
     private let insetsForTransactionFieldsView = UIEdgeInsets(top: .zero, left: .zero, bottom: 8, right: .zero)
@@ -71,12 +71,17 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
                 switch transactionType {
                 case .debit:
                     self.currentTransactionType = .debit
+                    self.tempTransaction?.transactionType = .debit
                 case .credit:
                     self.currentTransactionType = .credit
+                    self.tempTransaction?.transactionType = .credit
                 }
+                self.toggleSaveTransactionButtonIfNeeded()
                 self.transactionFieldsView.reloadSections(.init(integer: .zero), with: .automatic)
             }), at: .zero, animated: true)
         }
+        transactionTypeSegmentedControl.selectedSegmentIndex = 1
+        tempTransaction?.transactionType = .debit
         
     }
     private func configTableView() {
@@ -226,8 +231,11 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
 
 extension NBTransactionDetailViewController {
     func addNewTransaction() {
-        tempTransaction = NBTransaction.NBTempTransaction()
+        let newTransaction = NBTransaction.NBTempTransaction()
+        tempTransaction = newTransaction
         navigationItem.setLeftBarButton(nil, animated: true)
+        transactionTypeSegmentedControl.selectedSegmentIndex = allowedTransactionTypes.firstIndex(of: newTransaction.transactionType) ?? 1
+        currentTransactionType = newTransaction.transactionType
         transactionFieldsView.reloadData()
     }
     func loadTransaction(having id: UUID) {
@@ -238,6 +246,9 @@ extension NBTransactionDetailViewController {
                     self?.transaction = transaction
                     self?.tempTransaction = .init(transaction: transaction)
                     self?.navigationItem.setLeftBarButton(self?.deleteTransactionBarButtonItem, animated: true)
+                    self?.currentTransactionType = transaction.transactionType
+                    self?.transactionTypeSegmentedControl.selectedSegmentIndex = self?.allowedTransactionTypes.firstIndex(of: transaction.transactionType) ?? 1
+                    self?.toggleSaveTransactionButtonIfNeeded()
                     self?.transactionFieldsView.reloadData()
                 case .failure(let failure):
                     let alertController = UIAlertController(title: "Unable to load transaction", message: failure.localizedDescription, preferredStyle: .alert)
