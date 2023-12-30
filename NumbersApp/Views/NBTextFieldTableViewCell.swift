@@ -26,6 +26,9 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
     // MARK: Views
     private let pickerView = UIPickerView()
     private let datePicker = UIDatePicker()
+    private let toolbar = UIToolbar()
+    private let doneBarButtonItem = UIBarButtonItem(systemItem: .done)
+    private let keyboardToggleBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "keyboard"))
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -59,6 +62,7 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
     
     // MARK: Configurations
     private func configViews() {
+        configToolbar()
         values = []
         textField.inputView = nil
         textField.addAction(UIAction(handler: { _ in
@@ -88,6 +92,14 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
     private func configDatePicker() {
         textField.inputView = isDatePicker ? datePicker : nil
     }
+    private func configToolbar() {
+        doneBarButtonItem.primaryAction = UIAction(handler: { [weak self] _ in
+            self?.endEditing(true)
+        })
+        toolbar.setItems([.flexibleSpace(), doneBarButtonItem], animated: true)
+        toolbar.sizeToFit()
+        textField.inputAccessoryView = toolbar
+    }
     
     // MARK: Constructors
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -108,10 +120,22 @@ extension NBTextFieldTableViewCell {
 extension NBTextFieldTableViewCell {
     func setKeyboardType(_ keyboardType: UIKeyboardType) {
         textField.keyboardType = keyboardType
+        toolbar.setItems([.flexibleSpace(), doneBarButtonItem], animated: true)
     }
     func setPickerValues(_ values: [(key: String, value: String)]) {
         self.values = values
         textField.inputView = pickerView
+        keyboardToggleBarButtonItem.primaryAction = UIAction(handler: { [weak self] _ in
+            if self?.textField.inputView == nil {
+                self?.textField.inputView = self?.pickerView
+                self?.keyboardToggleBarButtonItem.image = .init(systemName: "keyboard")
+            } else {
+                self?.textField.inputView = nil
+                self?.keyboardToggleBarButtonItem.image = .init(systemName: "list.bullet.rectangle")
+            }
+            self?.textField.reloadInputViews()
+        })
+        toolbar.setItems([keyboardToggleBarButtonItem, .flexibleSpace(), doneBarButtonItem], animated: true)
     }
 }
 

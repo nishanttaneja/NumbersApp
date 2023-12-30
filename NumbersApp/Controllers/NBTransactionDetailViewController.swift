@@ -183,7 +183,7 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
             textFieldCell.isDatePicker = true
             textFieldCell.set(date: tempTransaction?.date)
         case .title:
-            textFieldCell.setKeyboardType(.asciiCapable)
+            textFieldCell.setKeyboardType(.default)
             textFieldCell.set(title: tempTransaction?.title)
         case .category:
             textFieldCell.setPickerValues(categories.compactMap({ (key: $0.rawValue, value: $0.title) }))
