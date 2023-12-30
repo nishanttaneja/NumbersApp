@@ -9,6 +9,7 @@ import Foundation
 
 extension Notification.Name {
     static let NBCDManagerDidUpdateTransaction = Notification.Name(rawValue: "NBCDManager-didUpdateTransaction")
+    static let NBCDManagerDidCreateNewTransactionPaymentMethod = Notification.Name(rawValue: "NBCDManager-didCreateNewTransactionPaymentMethod")
 }
 
 struct NBNCManager {

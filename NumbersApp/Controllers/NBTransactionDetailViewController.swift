@@ -134,6 +134,11 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
         configViews()
         configNavigationItem()
         loadPaymentMethods()
+        configNotifications()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        transactionFieldsView.reloadSections(.init(integer: .zero), with: .automatic)
     }
     private func configNavigationItem() {
         deleteTransactionBarButtonItem = UIBarButtonItem(systemItem: .trash, primaryAction: UIAction(handler: { [weak self] _ in
@@ -220,8 +225,11 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
             let expenseType = expenseTypes[index]
             tempTransaction?.expenseType = expenseType
         case .paymentMethod:
-            guard let index, index < paymentMethods.count else { return }
-            let paymentMethod = paymentMethods[index]
+//            guard let index, index < paymentMethods.count else { return }
+//            let paymentMethod = paymentMethods[index]
+//            tempTransaction?.paymentMethod = paymentMethod
+            guard let newValue = newValue as? String else { return }
+            let paymentMethod = paymentMethods.first(where: { $0.id.uuidString == newValue }) ?? NBTransaction.NBTransactionPaymentMethod(title: newValue)
             tempTransaction?.paymentMethod = paymentMethod
         case .amount:
             tempTransaction?.amount = newValue as? Double
@@ -274,5 +282,16 @@ extension NBTransactionDetailViewController {
                 }
             }
         }
+    }
+}
+
+
+// MARK: - Notification
+extension NBTransactionDetailViewController {
+    @objc private func handleCreateNewTransactionPaymentMethod(notification: Notification) {
+        loadPaymentMethods()
+    }
+    private func configNotifications() {
+        NBNCManager.shared.addObserver(self, selector: #selector(handleCreateNewTransactionPaymentMethod(notification:)), forNotification: .NBCDManagerDidCreateNewTransactionPaymentMethod)
     }
 }
