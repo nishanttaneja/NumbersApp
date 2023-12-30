@@ -65,6 +65,7 @@ struct NBTransaction {
     struct NBTempTransaction {
         var id: UUID?
         var date: Date?
+        let defaultDate: Date = .now
         var title: String?
         var transactionType: NBTransactionType = .debit
         var category: NBTransactionCategory?

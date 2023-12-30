@@ -18,11 +18,11 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
     private var tempTransaction: NBTransaction.NBTempTransaction?
     private var transaction: NBTransaction?
     private var allowSave: Bool {
-        tempTransaction?.date != nil && tempTransaction?.title?.replacingOccurrences(of: " ", with: "").isEmpty == false && tempTransaction?.category != nil && tempTransaction?.expenseType != nil && tempTransaction?.paymentMethod != nil && tempTransaction?.amount != nil && tempTransaction?.transactionType != nil && hasChanges
+        (tempTransaction?.date ?? tempTransaction?.defaultDate) != nil && tempTransaction?.title?.replacingOccurrences(of: " ", with: "").isEmpty == false && tempTransaction?.category != nil && tempTransaction?.expenseType != nil && tempTransaction?.paymentMethod != nil && tempTransaction?.amount != nil && tempTransaction?.transactionType != nil && hasChanges
     }
     private var hasChanges: Bool {
         guard let transaction else { return true }
-        return transaction.date.startOfDay != tempTransaction?.date?.startOfDay || transaction.title != tempTransaction?.title || transaction.category != tempTransaction?.category || transaction.expenseType != tempTransaction?.expenseType || transaction.paymentMethod != tempTransaction?.paymentMethod || transaction.amount != tempTransaction?.amount || transaction.transactionType != tempTransaction?.transactionType
+        return transaction.date.startOfDay != tempTransaction?.date?.startOfDay ?? tempTransaction?.defaultDate.startOfDay || transaction.title != tempTransaction?.title || transaction.category != tempTransaction?.category || transaction.expenseType != tempTransaction?.expenseType || transaction.paymentMethod != tempTransaction?.paymentMethod || transaction.amount != tempTransaction?.amount || transaction.transactionType != tempTransaction?.transactionType
     }
     private let saveButtonInsets = UIEdgeInsets(top: .zero, left: 16, bottom: 8, right: 16)
     private let insetsForTransactionFieldsView = UIEdgeInsets(top: .zero, left: .zero, bottom: 8, right: .zero)
