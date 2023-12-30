@@ -124,7 +124,9 @@ extension NBTextFieldTableViewCell {
     }
     func setPickerValues(_ values: [(key: String, value: String)]) {
         self.values = values
-        textField.inputView = pickerView
+        if !values.isEmpty {
+            textField.inputView = pickerView
+        }
         keyboardToggleBarButtonItem.primaryAction = UIAction(handler: { [weak self] _ in
             if self?.textField.inputView == nil {
                 self?.textField.inputView = self?.pickerView

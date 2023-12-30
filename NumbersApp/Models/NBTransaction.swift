@@ -158,7 +158,7 @@ extension NBTransaction.NBTransactionPaymentMethod {
             transactions = self.transactions
         }
         return transactions.reduce(.zero) { partialResult, transaction in
-            partialResult + transaction.amount
+            partialResult + (transaction.transactionType == .debit ? transaction.amount : -transaction.amount)
         }
     }
 }
