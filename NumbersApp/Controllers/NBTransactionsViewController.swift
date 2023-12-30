@@ -55,7 +55,8 @@ final class NBTransactionsViewController: UITableViewController {
         let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
         cell.textLabel?.text = transaction.title
         cell.textLabel?.numberOfLines = .zero
-        cell.detailTextLabel?.text = "₹ " + String(transaction.amount)
+        cell.detailTextLabel?.text = "\(transaction.transactionType == .credit ? "+ " : "")₹" + String(transaction.amount)
+        cell.detailTextLabel?.textColor = transaction.transactionType == .credit ? .systemGreen : .systemGray
         return cell
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

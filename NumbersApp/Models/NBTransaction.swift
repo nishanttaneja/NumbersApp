@@ -56,11 +56,18 @@ struct NBTransaction {
         case amount
     }
     
+    // MARK: TransactionType
+    enum NBTransactionType: String, CaseIterable {
+        case credit, debit
+    }
+    
     // MARK: Temp
     struct NBTempTransaction {
         var id: UUID?
         var date: Date?
+        let defaultDate: Date = .now
         var title: String?
+        var transactionType: NBTransactionType = .debit
         var category: NBTransactionCategory?
         var expenseType: NBTransactionExpenseType?
         var paymentMethod: NBTransactionPaymentMethod?
@@ -70,16 +77,18 @@ struct NBTransaction {
     let id: UUID
     let date: Date
     let title: String
+    let transactionType: NBTransactionType
     let category: NBTransactionCategory
     let expenseType: NBTransactionExpenseType
     let paymentMethod: NBTransactionPaymentMethod
     let amount: Double
     
     // MARK: Constructor
-    init(id: UUID = UUID(), date: Date = .now, title: String, category: NBTransactionCategory, expenseType: NBTransactionExpenseType, paymentMethod: NBTransactionPaymentMethod, amount: Double) {
+    init(id: UUID = UUID(), date: Date = .now, title: String, transactionType: NBTransactionType, category: NBTransactionCategory, expenseType: NBTransactionExpenseType, paymentMethod: NBTransactionPaymentMethod, amount: Double) {
         self.id = id
         self.date = date
         self.title = title
+        self.transactionType = transactionType
         self.category = category
         self.expenseType = expenseType
         self.paymentMethod = paymentMethod
@@ -111,32 +120,43 @@ extension NBTransaction.NBTransactionPaymentMethod {
     }
 }
 
+
 // MARK: - Field
 extension NBTransaction.NBTransactionField {
-    var title: String {
+    func getTitle(for transactionType: NBTransaction.NBTransactionType) -> String {
+        let paidOrReceivedString = transactionType == .debit ? "Paid" : "Received"
         switch self {
         case .date:
             return "\(Date.now.formatted(date: .abbreviated, time: .omitted)) (Default)"
         case .title:
-            return "Paying for..."
+            return paidOrReceivedString + " for..."
         case .category, .expenseType:
             return rawValue.capitalized
         case .paymentMethod:
-            return "Paid using..."
+            return paidOrReceivedString + " using..."
         case .amount:
             return rawValue.capitalized
         }
     }
 }
 
+
+// MARK: - TransactionType
+extension NBTransaction.NBTransactionType {
+    var title: String {
+        rawValue.capitalized
+    }
+}
+
+
 // MARK: - TempTransaction
 extension NBTransaction.NBTempTransaction {
     func getTransaction() -> NBTransaction? {
         guard let title, let category, let expenseType, let paymentMethod, let amount else { return nil }
-        return NBTransaction(id: id ?? UUID(), date: date ?? .now, title: title, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: amount)
+        return NBTransaction(id: id ?? UUID(), date: date ?? .now, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: amount)
     }
     
     init(transaction: NBTransaction) {
-        self.init(id: transaction.id, date: transaction.date, title: transaction.title, category: transaction.category, expenseType: transaction.expenseType, paymentMethod: transaction.paymentMethod, amount: transaction.amount)
+        self.init(id: transaction.id, date: transaction.date, title: transaction.title, transactionType: transaction.transactionType, category: transaction.category, expenseType: transaction.expenseType, paymentMethod: transaction.paymentMethod, amount: transaction.amount)
     }
 }

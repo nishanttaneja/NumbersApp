@@ -21,6 +21,11 @@ final class NBCDManager {
         container.loadPersistentStores { storeDescription, error in
             if let error {
                 fatalError("Unresolved error \(error), \(error.localizedDescription)")
+            } else {
+                let description = NSPersistentStoreDescription()
+                description.shouldMigrateStoreAutomatically = false
+                description.shouldInferMappingModelAutomatically = true
+                container.persistentStoreDescriptions = [description]
             }
         }
         return container
@@ -37,6 +42,7 @@ extension NBCDManager {
             transaction.transactionID = newTransaction.id
             transaction.date = newTransaction.date
             transaction.title = newTransaction.title
+            transaction.transactionType = newTransaction.transactionType.rawValue
             transaction.category = newTransaction.category.rawValue
             transaction.expenseType = newTransaction.expenseType.rawValue
             transaction.paymentMethod = newTransaction.paymentMethod.rawValue
@@ -63,10 +69,11 @@ extension NBCDManager {
                 guard let transactionId = savedTransaction.transactionID,
                       let date = savedTransaction.date,
                       let title = savedTransaction.title,
+                      let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
                       let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
                       let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue),
                       let paymentMethodRawValue = savedTransaction.paymentMethod, let paymentMethod = NBTransaction.NBTransactionPaymentMethod(rawValue: paymentMethodRawValue) else { return nil }
-                return NBTransaction(id: transactionId, date: date, title: title, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: savedTransaction.amount)
+                return NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: savedTransaction.amount)
             }
             completionHandler(.success(transactionsToDisplay))
         } catch let error {
@@ -86,10 +93,11 @@ extension NBCDManager {
                   let transactionId = savedTransaction.transactionID,
                   let date = savedTransaction.date,
                   let title = savedTransaction.title,
+                  let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
                   let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
                   let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue),
                   let paymentMethodRawValue = savedTransaction.paymentMethod, let paymentMethod = NBTransaction.NBTransactionPaymentMethod(rawValue: paymentMethodRawValue) else { throw NBCDError.noDataFound }
-            let transactionToDisplay = NBTransaction(id: transactionId, date: date, title: title, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: savedTransaction.amount)
+            let transactionToDisplay = NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: savedTransaction.amount)
             completionHandler(.success(transactionToDisplay))
         } catch let error {
             debugPrint(#function, error)

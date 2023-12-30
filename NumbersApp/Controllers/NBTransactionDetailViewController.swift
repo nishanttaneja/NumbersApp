@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class NBTransactionDetailViewController: UITableViewController, NBTextFieldTableViewCellDelegate {
+final class NBTransactionDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NBTextFieldTableViewCellDelegate {
     // MARK: Properties
     private let textFieldCellReuseIdentifier = "textFieldCell-NBTransactionDetailViewController"
     private let buttonHeaderFooterViewReuseIdentifier = "buttonView-NBTransactionDetailViewController"
@@ -18,15 +18,21 @@ final class NBTransactionDetailViewController: UITableViewController, NBTextFiel
     private var tempTransaction: NBTransaction.NBTempTransaction?
     private var transaction: NBTransaction?
     private var allowSave: Bool {
-        tempTransaction?.date != nil && tempTransaction?.title?.replacingOccurrences(of: " ", with: "").isEmpty == false && tempTransaction?.category != nil && tempTransaction?.expenseType != nil && tempTransaction?.paymentMethod != nil && tempTransaction?.amount != nil && hasChanges
+        (tempTransaction?.date ?? tempTransaction?.defaultDate) != nil && tempTransaction?.title?.replacingOccurrences(of: " ", with: "").isEmpty == false && tempTransaction?.category != nil && tempTransaction?.expenseType != nil && tempTransaction?.paymentMethod != nil && tempTransaction?.amount != nil && tempTransaction?.transactionType != nil && hasChanges
     }
     private var hasChanges: Bool {
         guard let transaction else { return true }
-        return transaction.date.startOfDay != tempTransaction?.date?.startOfDay || transaction.title != tempTransaction?.title || transaction.category != tempTransaction?.category || transaction.expenseType != tempTransaction?.expenseType || transaction.paymentMethod != tempTransaction?.paymentMethod || transaction.amount != tempTransaction?.amount
+        return transaction.date.startOfDay != tempTransaction?.date?.startOfDay ?? tempTransaction?.defaultDate.startOfDay || transaction.title != tempTransaction?.title || transaction.category != tempTransaction?.category || transaction.expenseType != tempTransaction?.expenseType || transaction.paymentMethod != tempTransaction?.paymentMethod || transaction.amount != tempTransaction?.amount || transaction.transactionType != tempTransaction?.transactionType
     }
     private let saveButtonInsets = UIEdgeInsets(top: .zero, left: 16, bottom: 8, right: 16)
+    private let insetsForTransactionFieldsView = UIEdgeInsets(top: .zero, left: .zero, bottom: 8, right: .zero)
+    private let allowedTransactionTypes = NBTransaction.NBTransactionType.allCases
+    private var currentTransactionType: NBTransaction.NBTransactionType = .debit
+    private let insetsForTransactionTypeSegmentedControl = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
     
     // MARK: Views
+    private let transactionTypeSegmentedControl = UISegmentedControl()
+    private let transactionFieldsView = UITableView(frame: .zero, style: .plain)
     private let saveTransactionButton = UIButton()
     private var deleteTransactionBarButtonItem: UIBarButtonItem?
     
@@ -56,14 +62,63 @@ final class NBTransactionDetailViewController: UITableViewController, NBTextFiel
             }
         }
     }
-    private func configViews() {
+    
+    // MARK: Configurations
+    private func configTransactionTypeSegmentedControl() {
+        allowedTransactionTypes.reversed().forEach { transactionType in
+            transactionTypeSegmentedControl.insertSegment(action: UIAction(title: transactionType.title, handler: { _ in
+                guard transactionType != self.currentTransactionType else { return }
+                switch transactionType {
+                case .debit:
+                    self.currentTransactionType = .debit
+                    self.tempTransaction?.transactionType = .debit
+                case .credit:
+                    self.currentTransactionType = .credit
+                    self.tempTransaction?.transactionType = .credit
+                }
+                self.toggleSaveTransactionButtonIfNeeded()
+                self.transactionFieldsView.reloadSections(.init(integer: .zero), with: .automatic)
+            }), at: .zero, animated: true)
+        }
+        transactionTypeSegmentedControl.selectedSegmentIndex = 1
+        tempTransaction?.transactionType = .debit
+        
+    }
+    private func configTableView() {
+        transactionFieldsView.dataSource = self
+        transactionFieldsView.delegate = self
+        transactionFieldsView.register(NBTextFieldTableViewCell.self, forCellReuseIdentifier: textFieldCellReuseIdentifier)
+        transactionFieldsView.rowHeight = 44
+        transactionFieldsView.keyboardDismissMode = .onDrag
+    }
+    private func configSaveTransactionButton() {
         saveTransactionButton.setTitle("Save Transaction", for: .normal)
         toggleSaveTransactionButtonIfNeeded()
         saveTransactionButton.layer.cornerRadius = 8
-        saveTransactionButton.translatesAutoresizingMaskIntoConstraints = false
         saveTransactionButton.addTarget(self, action: #selector(handleTouchUpInsideEvent(forSaveTransaction:)), for: .touchUpInside)
+    }
+    private func configViews() {
+        view.backgroundColor = transactionFieldsView.backgroundColor
+        configTransactionTypeSegmentedControl()
+        configTableView()
+        configSaveTransactionButton()
+        transactionTypeSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(transactionTypeSegmentedControl)
+        transactionFieldsView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(transactionFieldsView)
+        saveTransactionButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(saveTransactionButton)
         NSLayoutConstraint.activate([
+            // Transaction Type
+            transactionTypeSegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: insetsForTransactionTypeSegmentedControl.top),
+            transactionTypeSegmentedControl.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: insetsForTransactionTypeSegmentedControl.left),
+            transactionTypeSegmentedControl.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -insetsForTransactionTypeSegmentedControl.right),
+            // Transaction Fields View
+            transactionFieldsView.topAnchor.constraint(equalTo: transactionTypeSegmentedControl.bottomAnchor, constant: insetsForTransactionTypeSegmentedControl.bottom),
+            transactionFieldsView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: insetsForTransactionFieldsView.left),
+            transactionFieldsView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -insetsForTransactionFieldsView.right),
+            // Save Transaction Button
+            saveTransactionButton.topAnchor.constraint(equalTo: transactionFieldsView.bottomAnchor, constant: insetsForTransactionFieldsView.bottom),
             saveTransactionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -saveButtonInsets.bottom),
             saveTransactionButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: saveButtonInsets.left),
             saveTransactionButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -saveButtonInsets.right),
@@ -75,9 +130,6 @@ final class NBTransactionDetailViewController: UITableViewController, NBTextFiel
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Transaction Detail"
-        tableView.register(NBTextFieldTableViewCell.self, forCellReuseIdentifier: textFieldCellReuseIdentifier)
-        tableView.rowHeight = 44
-        tableView.keyboardDismissMode = .onDrag
         addNewTransaction()
         configViews()
         configNavigationItem()
@@ -111,14 +163,14 @@ final class NBTransactionDetailViewController: UITableViewController, NBTextFiel
     }
     
     // MARK: TableView
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         fields.count
     }
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: textFieldCellReuseIdentifier, for: indexPath)
         guard let textFieldCell = cell as? NBTextFieldTableViewCell, fields.count > indexPath.row else { return cell }
         let transactionField = fields[indexPath.row]
-        textFieldCell.setPlaceholder(transactionField.title)
+        textFieldCell.setPlaceholder(transactionField.getTitle(for: currentTransactionType))
         textFieldCell.delegate = self
         switch transactionField {
         case .date:
@@ -151,7 +203,7 @@ final class NBTransactionDetailViewController: UITableViewController, NBTextFiel
     
     // MARK: CellDelegate
     func textField(tableViewCell: NBTextFieldTableViewCell, didUpdateValueTo newValue: Any, usingPickerOptionAt index: Int?) {
-        guard let row = tableView.indexPath(for: tableViewCell)?.row, row < fields.count else { return }
+        guard let row = transactionFieldsView.indexPath(for: tableViewCell)?.row, row < fields.count else { return }
         let field = fields[row]
         switch field {
         case .date:
@@ -179,9 +231,12 @@ final class NBTransactionDetailViewController: UITableViewController, NBTextFiel
 
 extension NBTransactionDetailViewController {
     func addNewTransaction() {
-        tempTransaction = NBTransaction.NBTempTransaction()
+        let newTransaction = NBTransaction.NBTempTransaction()
+        tempTransaction = newTransaction
         navigationItem.setLeftBarButton(nil, animated: true)
-        tableView.reloadData()
+        transactionTypeSegmentedControl.selectedSegmentIndex = allowedTransactionTypes.firstIndex(of: newTransaction.transactionType) ?? 1
+        currentTransactionType = newTransaction.transactionType
+        transactionFieldsView.reloadData()
     }
     func loadTransaction(having id: UUID) {
         NBCDManager.shared.loadTransaction(having: id) { [weak self] result in
@@ -191,7 +246,10 @@ extension NBTransactionDetailViewController {
                     self?.transaction = transaction
                     self?.tempTransaction = .init(transaction: transaction)
                     self?.navigationItem.setLeftBarButton(self?.deleteTransactionBarButtonItem, animated: true)
-                    self?.tableView.reloadData()
+                    self?.currentTransactionType = transaction.transactionType
+                    self?.transactionTypeSegmentedControl.selectedSegmentIndex = self?.allowedTransactionTypes.firstIndex(of: transaction.transactionType) ?? 1
+                    self?.toggleSaveTransactionButtonIfNeeded()
+                    self?.transactionFieldsView.reloadData()
                 case .failure(let failure):
                     let alertController = UIAlertController(title: "Unable to load transaction", message: failure.localizedDescription, preferredStyle: .alert)
                     alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
