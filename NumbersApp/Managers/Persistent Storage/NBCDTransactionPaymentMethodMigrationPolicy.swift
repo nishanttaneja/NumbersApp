@@ -16,7 +16,7 @@ final class NBCDTransactionPaymentMethodMigrationPolicy: NSEntityMigrationPolicy
               let title = sInstance.value(forKeyPath: #keyPath(NBCDTransaction.title)) as? String,
               let category = sInstance.value(forKeyPath: #keyPath(NBCDTransaction.category)) as? String,
               let expenseType = sInstance.value(forKeyPath: #keyPath(NBCDTransaction.expenseType)) as? String,
-              let paymentMethod = sInstance.value(forKeyPath: #keyPath(NBCDTransaction.paymentMethod)) as? String,
+              let paymentMethodTitle = sInstance.value(forKeyPath: #keyPath(NBCDTransaction.paymentMethod)) as? String,
               let amount = sInstance.value(forKeyPath: #keyPath(NBCDTransaction.amount)) as? Double else { return }
         let newTransactionEntity = NSEntityDescription.insertNewObject(forEntityName: entityName, into: manager.destinationContext)
         newTransactionEntity.setValue(transactionId, forKeyPath: #keyPath(NBCDTransaction.transactionID))
@@ -26,24 +26,15 @@ final class NBCDTransactionPaymentMethodMigrationPolicy: NSEntityMigrationPolicy
         newTransactionEntity.setValue(category, forKeyPath: #keyPath(NBCDTransaction.category))
         newTransactionEntity.setValue(expenseType, forKeyPath: #keyPath(NBCDTransaction.expenseType))
         newTransactionEntity.setValue(amount, forKeyPath: #keyPath(NBCDTransaction.amount))
-        let request = NBCDTransactionPaymentMethod.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), paymentMethod)
+        let request = NSFetchRequest<NSManagedObject>(entityName: "NBCDTransactionPaymentMethod")
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), paymentMethodTitle)
         if let destinationPaymentMethod = try manager.destinationContext.fetch(request).first {
             newTransactionEntity.setValue(destinationPaymentMethod, forKeyPath: #keyPath(NBCDTransaction.paymentMethod))
         } else {
             let newPaymentMethodEntity = NSEntityDescription.insertNewObject(forEntityName: "NBCDTransactionPaymentMethod", into: manager.destinationContext)
             newPaymentMethodEntity.setValue(UUID(), forKeyPath: #keyPath(NBCDTransactionPaymentMethod.paymentMethodID))
-            newPaymentMethodEntity.setValue(paymentMethod, forKeyPath: #keyPath(NBCDTransactionPaymentMethod.title))
+            newPaymentMethodEntity.setValue(paymentMethodTitle, forKeyPath: #keyPath(NBCDTransactionPaymentMethod.title))
             newTransactionEntity.setValue(newPaymentMethodEntity, forKeyPath: #keyPath(NBCDTransaction.paymentMethod))
         }
-    }
-    
-    
-    override func createRelationships(forDestination dInstance: NSManagedObject, in mapping: NSEntityMapping, manager: NSMigrationManager) throws {
-        let entitiyName = "NBCDTransactionPaymentMethod"
-        guard dInstance.entity.name == entitiyName else { return }
-        let request = NBCDTransaction.fetchRequest()
-        let transactions = try manager.sourceContext.fetch(request)
-        dInstance.setValue(NSSet(array: transactions), forKeyPath: #keyPath(NBCDTransactionPaymentMethod.transactions))
     }
 }
