@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23B92" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="NBCDTransaction" representedClassName="NBCDTransaction" syncable="YES" codeGenerationType="class">
+        <attribute name="amount" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="category" attributeType="String"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="expenseType" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="transactionID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="transactionType" attributeType="String"/>
+        <relationship name="paymentMethod" optional="YES" maxCount="1" deletionRule="Deny" destinationEntity="NBCDTransactionPaymentMethod" inverseName="transactions" inverseEntity="NBCDTransactionPaymentMethod"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="transactionID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="NBCDTransactionPaymentMethod" representedClassName="NBCDTransactionPaymentMethod" syncable="YES" codeGenerationType="class">
+        <attribute name="paymentMethodID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="transactions" optional="YES" toMany="YES" deletionRule="Deny" destinationEntity="NBCDTransaction" inverseName="paymentMethod" inverseEntity="NBCDTransaction"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="paymentMethodID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+</model>

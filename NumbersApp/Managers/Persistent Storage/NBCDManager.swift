@@ -45,8 +45,12 @@ extension NBCDManager {
             transaction.transactionType = newTransaction.transactionType.rawValue
             transaction.category = newTransaction.category.rawValue
             transaction.expenseType = newTransaction.expenseType.rawValue
-            transaction.paymentMethod = newTransaction.paymentMethod.rawValue
             transaction.amount = newTransaction.amount
+            // Add to Payment Method
+            let paymentMethod = NBCDTransactionPaymentMethod(context: context)
+            paymentMethod.paymentMethodID = newTransaction.paymentMethod.id
+            paymentMethod.title = newTransaction.paymentMethod.title
+            paymentMethod.addToTransactions(transaction)
             do {
                 if context.hasChanges {
                     try context.save()
@@ -72,7 +76,8 @@ extension NBCDManager {
                       let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
                       let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
                       let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue),
-                      let paymentMethodRawValue = savedTransaction.paymentMethod, let paymentMethod = NBTransaction.NBTransactionPaymentMethod(rawValue: paymentMethodRawValue) else { return nil }
+                      let paymentMethodId = savedTransaction.paymentMethod?.paymentMethodID, let paymentMethodTitle = savedTransaction.paymentMethod?.title else { return nil }
+                let paymentMethod = NBTransaction.NBTransactionPaymentMethod(id: paymentMethodId, title: paymentMethodTitle)
                 return NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: savedTransaction.amount)
             }
             completionHandler(.success(transactionsToDisplay))
@@ -96,7 +101,8 @@ extension NBCDManager {
                   let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
                   let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
                   let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue),
-                  let paymentMethodRawValue = savedTransaction.paymentMethod, let paymentMethod = NBTransaction.NBTransactionPaymentMethod(rawValue: paymentMethodRawValue) else { throw NBCDError.noDataFound }
+                  let paymentMethodId = savedTransaction.paymentMethod?.paymentMethodID, let paymentMethodTitle = savedTransaction.paymentMethod?.title else  { throw NBCDError.noDataFound }
+            let paymentMethod = NBTransaction.NBTransactionPaymentMethod(id: paymentMethodId, title: paymentMethodTitle)
             let transactionToDisplay = NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: savedTransaction.amount)
             completionHandler(.success(transactionToDisplay))
         } catch let error {

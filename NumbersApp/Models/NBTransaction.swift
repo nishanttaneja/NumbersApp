@@ -26,26 +26,18 @@ struct NBTransaction {
     }
     
     // MARK: PaymentMethod
-    enum NBTransactionPaymentMethod: String, CaseIterable {
-        case appleWallet = "Apple Wallet"
-        case amazonICICI = "Amazon ICICI Credit Card"
-        case auBank = "AU Bank Savings Account"
-        case auLit = "AU Lit Credit Card"
-        case axisMyZone = "Axis My Zone Credit Card"
-        case bpclSBI = "BPCL RuPay SBI Credit Card"
-        case cash
-        case flipkartAxis = "Flipkart Axis Credit Card"
-        case hdfcBank = "HDFC Bank Savings Account"
-        case hdfcRuPay = "HDFC RuPay Credit Card"
-        case mummy
-        case oneCard = "OneCard"
-        case papa
-        case paytmBank = "Paytm Payments Bank Account"
-        case paytmHDFC = "Paytm HDFC Credit Card"
-        case postPe = "PostPe"
-        case sbiRuPay = "SBI RuPay Credit Card - xx31"
-        case swiggyHDFC = "Swiggy HDFC Credit Card"
-        case swiggyMoney = "Swiggy Money"
+    struct NBTransactionPaymentMethod: Equatable {
+        let id: UUID
+        let title: String
+        
+        init(id: UUID = UUID(), title: String) {
+            self.id = id
+            self.title = title
+        }
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.id == rhs.id
+        }
     }
     
     // MARK: Field
@@ -107,14 +99,6 @@ extension NBTransaction.NBTransactionCategory {
 
 // MARK: - ExpenseType
 extension NBTransaction.NBTransactionExpenseType {
-    var title: String {
-        rawValue.capitalized
-    }
-}
-
-
-// MARK: - PaymentMethod
-extension NBTransaction.NBTransactionPaymentMethod {
     var title: String {
         rawValue.capitalized
     }

@@ -14,7 +14,7 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
     private let fields = NBTransaction.NBTransactionField.allCases
     private let categories = NBTransaction.NBTransactionCategory.allCases
     private let expenseTypes = NBTransaction.NBTransactionExpenseType.allCases
-    private let paymentMethods = NBTransaction.NBTransactionPaymentMethod.allCases
+    private var paymentMethods: [NBTransaction.NBTransactionPaymentMethod] = []
     private var tempTransaction: NBTransaction.NBTempTransaction?
     private var transaction: NBTransaction?
     private var allowSave: Bool {
