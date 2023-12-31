@@ -14,7 +14,7 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
     private let fields = NBTransaction.NBTransactionField.allCases
     private let categories = NBTransaction.NBTransactionCategory.allCases
     private let expenseTypes = NBTransaction.NBTransactionExpenseType.allCases
-    private let paymentMethods = NBTransaction.NBTransactionPaymentMethod.allCases
+    private var paymentMethods: [NBTransaction.NBTransactionPaymentMethod] = []
     private var tempTransaction: NBTransaction.NBTempTransaction?
     private var transaction: NBTransaction?
     private var allowSave: Bool {
@@ -133,6 +133,12 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
         addNewTransaction()
         configViews()
         configNavigationItem()
+        loadPaymentMethods()
+        configNotifications()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        transactionFieldsView.reloadSections(.init(integer: .zero), with: .automatic)
     }
     private func configNavigationItem() {
         deleteTransactionBarButtonItem = UIBarButtonItem(systemItem: .trash, primaryAction: UIAction(handler: { [weak self] _ in
@@ -177,20 +183,20 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
             textFieldCell.isDatePicker = true
             textFieldCell.set(date: tempTransaction?.date)
         case .title:
-            textFieldCell.setKeyboardType(.asciiCapable)
+            textFieldCell.setKeyboardType(.default)
             textFieldCell.set(title: tempTransaction?.title)
         case .category:
-            textFieldCell.setPickerValues(categories.compactMap({ $0.title }))
+            textFieldCell.setPickerValues(categories.compactMap({ (key: $0.rawValue, value: $0.title) }))
             if let category = tempTransaction?.category {
                 textFieldCell.set(valueIndex: categories.firstIndex(of: category))
             }
         case .expenseType:
-            textFieldCell.setPickerValues(expenseTypes.compactMap({ $0.title }))
+            textFieldCell.setPickerValues(expenseTypes.compactMap({ (key: $0.rawValue, value: $0.title) }))
             if let expenseType = tempTransaction?.expenseType {
                 textFieldCell.set(valueIndex: expenseTypes.firstIndex(of: expenseType))
             }
         case .paymentMethod:
-            textFieldCell.setPickerValues(paymentMethods.compactMap({ $0.title }))
+            textFieldCell.setPickerValues(paymentMethods.compactMap({ (key: $0.id.uuidString, value: $0.title) }))
             if let paymentMethod = tempTransaction?.paymentMethod {
                 textFieldCell.set(valueIndex: paymentMethods.firstIndex(of: paymentMethod))
             }
@@ -219,8 +225,11 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
             let expenseType = expenseTypes[index]
             tempTransaction?.expenseType = expenseType
         case .paymentMethod:
-            guard let index, index < paymentMethods.count else { return }
-            let paymentMethod = paymentMethods[index]
+//            guard let index, index < paymentMethods.count else { return }
+//            let paymentMethod = paymentMethods[index]
+//            tempTransaction?.paymentMethod = paymentMethod
+            guard let newValue = newValue as? String else { return }
+            let paymentMethod = paymentMethods.first(where: { $0.id.uuidString == newValue }) ?? NBTransaction.NBTransactionPaymentMethod(title: newValue)
             tempTransaction?.paymentMethod = paymentMethod
         case .amount:
             tempTransaction?.amount = newValue as? Double
@@ -258,5 +267,31 @@ extension NBTransactionDetailViewController {
             }
         }
     }
+    private func loadPaymentMethods() {
+        NBCDManager.shared.loadAllPaymentMethods { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let savedPaymentMethods):
+                    self?.paymentMethods = savedPaymentMethods
+                    guard let index = self?.fields.firstIndex(of: .paymentMethod) else { return }
+                    self?.transactionFieldsView.reloadRows(at: [IndexPath(row: index, section: .zero)], with: .automatic)
+                case .failure(let failure):
+                    let alertController = UIAlertController(title: "Unable to load payment methods", message: failure.localizedDescription, preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
+                    self?.present(alertController, animated: true)
+                }
+            }
+        }
+    }
+}
 
+
+// MARK: - Notification
+extension NBTransactionDetailViewController {
+    @objc private func handleCreateNewTransactionPaymentMethod(notification: Notification) {
+        loadPaymentMethods()
+    }
+    private func configNotifications() {
+        NBNCManager.shared.addObserver(self, selector: #selector(handleCreateNewTransactionPaymentMethod(notification:)), forNotification: .NBCDManagerDidCreateNewTransactionPaymentMethod)
+    }
 }

@@ -75,14 +75,16 @@ final class NBTransactionsViewController: UITableViewController {
             guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return }
             let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
             NBCDManager.shared.deleteTransaction(having: transaction.id) { [weak self] result in
-                switch result {
-                case .success(let success):
-                    guard success else { return }
-                    self?.loadTransactions()
-                case .failure(let failure):
-                    let alertController = UIAlertController(title: "Unable to delete transaction", message: failure.localizedDescription, preferredStyle: .alert)
-                    alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
-                    self?.present(alertController, animated: true)
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let success):
+                        guard success else { return }
+                        NBNCManager.shared.postNotification(name: .NBCDManagerDidUpdateTransaction)
+                    case .failure(let failure):
+                        let alertController = UIAlertController(title: "Unable to delete transaction", message: failure.localizedDescription, preferredStyle: .alert)
+                        alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
+                        self?.present(alertController, animated: true)
+                    }
                 }
             }
         default: break

@@ -26,26 +26,20 @@ struct NBTransaction {
     }
     
     // MARK: PaymentMethod
-    enum NBTransactionPaymentMethod: String, CaseIterable {
-        case appleWallet = "Apple Wallet"
-        case amazonICICI = "Amazon ICICI Credit Card"
-        case auBank = "AU Bank Savings Account"
-        case auLit = "AU Lit Credit Card"
-        case axisMyZone = "Axis My Zone Credit Card"
-        case bpclSBI = "BPCL RuPay SBI Credit Card"
-        case cash
-        case flipkartAxis = "Flipkart Axis Credit Card"
-        case hdfcBank = "HDFC Bank Savings Account"
-        case hdfcRuPay = "HDFC RuPay Credit Card"
-        case mummy
-        case oneCard = "OneCard"
-        case papa
-        case paytmBank = "Paytm Payments Bank Account"
-        case paytmHDFC = "Paytm HDFC Credit Card"
-        case postPe = "PostPe"
-        case sbiRuPay = "SBI RuPay Credit Card - xx31"
-        case swiggyHDFC = "Swiggy HDFC Credit Card"
-        case swiggyMoney = "Swiggy Money"
+    struct NBTransactionPaymentMethod: Equatable {
+        let id: UUID
+        let title: String
+        let transactions: [NBTransaction]
+        
+        init(id: UUID = UUID(), title: String, transactions: [NBTransaction] = []) {
+            self.id = id
+            self.title = title
+            self.transactions = transactions
+        }
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.id == rhs.id
+        }
     }
     
     // MARK: Field
@@ -113,14 +107,6 @@ extension NBTransaction.NBTransactionExpenseType {
 }
 
 
-// MARK: - PaymentMethod
-extension NBTransaction.NBTransactionPaymentMethod {
-    var title: String {
-        rawValue.capitalized
-    }
-}
-
-
 // MARK: - Field
 extension NBTransaction.NBTransactionField {
     func getTitle(for transactionType: NBTransaction.NBTransactionType) -> String {
@@ -158,5 +144,21 @@ extension NBTransaction.NBTempTransaction {
     
     init(transaction: NBTransaction) {
         self.init(id: transaction.id, date: transaction.date, title: transaction.title, transactionType: transaction.transactionType, category: transaction.category, expenseType: transaction.expenseType, paymentMethod: transaction.paymentMethod, amount: transaction.amount)
+    }
+}
+
+
+// MARK: - PaymentMethod
+extension NBTransaction.NBTransactionPaymentMethod {
+    func getTotalAmount(for transactionType: NBTransaction.NBTransactionType? = nil) -> Double {
+        let transactions: [NBTransaction]
+        if let transactionType {
+            transactions = self.transactions.filter({ $0.transactionType == transactionType })
+        } else {
+            transactions = self.transactions
+        }
+        return transactions.reduce(.zero) { partialResult, transaction in
+            partialResult + (transaction.transactionType == .debit ? transaction.amount : -transaction.amount)
+        }
     }
 }

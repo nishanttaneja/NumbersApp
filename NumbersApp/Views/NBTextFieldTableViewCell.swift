@@ -16,7 +16,7 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
     private let textFieldInsets = UIEdgeInsets(top: .zero, left: 16, bottom: .zero, right: 16)
     private let textField = UITextField()
     weak var delegate: NBTextFieldTableViewCellDelegate?
-    private var values: [String] = []
+    private var values: [(key: String, value: String)] = []
     var isDatePicker: Bool = false {
         didSet {
             configDatePicker()
@@ -26,6 +26,9 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
     // MARK: Views
     private let pickerView = UIPickerView()
     private let datePicker = UIDatePicker()
+    private let toolbar = UIToolbar()
+    private let doneBarButtonItem = UIBarButtonItem(systemItem: .done)
+    private let keyboardToggleBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "keyboard"))
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -48,24 +51,30 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
     }
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         guard values.count > row else { return nil }
-        return values[row]
+        return values[row].value
     }
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         guard values.count > row else { return }
-        let text = values[row]
-        textField.text = text
-        delegate?.textField(tableViewCell: self, didUpdateValueTo: text, usingPickerOptionAt: row)
+        let value = values[row]
+        textField.text = value.value
+        delegate?.textField(tableViewCell: self, didUpdateValueTo: value.key, usingPickerOptionAt: row)
     }
     
     // MARK: Configurations
     private func configViews() {
+        configToolbar()
         values = []
         textField.inputView = nil
         textField.addAction(UIAction(handler: { _ in
             if self.textField.keyboardType == .decimalPad, let text = self.textField.text, let amount = Double(text) {
                 self.delegate?.textField(tableViewCell: self, didUpdateValueTo: amount, usingPickerOptionAt: nil)
             } else {
-                self.delegate?.textField(tableViewCell: self, didUpdateValueTo: self.textField.text as Any, usingPickerOptionAt: nil)
+                if self.textField.text?.replacingOccurrences(of: " ", with: "").isEmpty == false,
+                   let text = self.textField.text, let value = self.values.first(where: { $0.value == self.textField.text }) {
+                    self.delegate?.textField(tableViewCell: self, didUpdateValueTo: value.key, usingPickerOptionAt: self.values.firstIndex(where: { $0.key == value.key } ))
+                } else {
+                    self.delegate?.textField(tableViewCell: self, didUpdateValueTo: self.textField.text as Any, usingPickerOptionAt: nil)
+                }
             }
         }), for: .editingChanged)
         contentView.addSubview(textField, with: textFieldInsets)
@@ -82,6 +91,14 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
     }
     private func configDatePicker() {
         textField.inputView = isDatePicker ? datePicker : nil
+    }
+    private func configToolbar() {
+        doneBarButtonItem.primaryAction = UIAction(handler: { [weak self] _ in
+            self?.endEditing(true)
+        })
+        toolbar.setItems([.flexibleSpace(), doneBarButtonItem], animated: true)
+        toolbar.sizeToFit()
+        textField.inputAccessoryView = toolbar
     }
     
     // MARK: Constructors
@@ -103,10 +120,24 @@ extension NBTextFieldTableViewCell {
 extension NBTextFieldTableViewCell {
     func setKeyboardType(_ keyboardType: UIKeyboardType) {
         textField.keyboardType = keyboardType
+        toolbar.setItems([.flexibleSpace(), doneBarButtonItem], animated: true)
     }
-    func setPickerValues(_ values: [String]) {
+    func setPickerValues(_ values: [(key: String, value: String)]) {
         self.values = values
-        textField.inputView = pickerView
+        if !values.isEmpty {
+            textField.inputView = pickerView
+        }
+        keyboardToggleBarButtonItem.primaryAction = UIAction(handler: { [weak self] _ in
+            if self?.textField.inputView == nil {
+                self?.textField.inputView = self?.pickerView
+                self?.keyboardToggleBarButtonItem.image = .init(systemName: "keyboard")
+            } else {
+                self?.textField.inputView = nil
+                self?.keyboardToggleBarButtonItem.image = .init(systemName: "list.bullet.rectangle")
+            }
+            self?.textField.reloadInputViews()
+        })
+        toolbar.setItems([keyboardToggleBarButtonItem, .flexibleSpace(), doneBarButtonItem], animated: true)
     }
 }
 
