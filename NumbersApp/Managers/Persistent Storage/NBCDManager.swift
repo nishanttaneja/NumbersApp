@@ -50,7 +50,7 @@ extension NBCDManager {
                 transaction.amount = newTransaction.amount
                 // Fetching Payment Method
                 let request = NBCDTransactionPaymentMethod.fetchRequest()
-                request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.paymentMethodID), newTransaction.paymentMethod.id as CVarArg)
+                request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), newTransaction.paymentMethod.title)
                 if let paymentMethod = try context.fetch(request).first {
                     // Adding to Payment Method
                     paymentMethod.addToTransactions(transaction)
@@ -60,6 +60,46 @@ extension NBCDManager {
                     paymentMethod.paymentMethodID = newTransaction.paymentMethod.id
                     paymentMethod.title = newTransaction.paymentMethod.title
                     paymentMethod.addToTransactions(transaction)
+                }
+                if context.hasChanges {
+                    try context.save()
+                    completionHandler(.success(true))
+                } else {
+                    completionHandler(.success(false))
+                }
+            } catch let error {
+                debugPrint(#function, error)
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    private func saveTransactions(_ newTransactions: [NBTransaction], completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
+        persistentContainer.performBackgroundTask { context in
+            context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+            do {
+                for newTransaction in newTransactions {
+                    // Creating Transaction
+                    let transaction = NBCDTransaction(context: context)
+                    transaction.transactionID = newTransaction.id
+                    transaction.date = newTransaction.date
+                    transaction.title = newTransaction.title
+                    transaction.transactionType = newTransaction.transactionType.rawValue
+                    transaction.category = newTransaction.category.rawValue
+                    transaction.expenseType = newTransaction.expenseType.rawValue
+                    transaction.amount = newTransaction.amount
+                    // Fetching Payment Method
+                    let request = NBCDTransactionPaymentMethod.fetchRequest()
+                    request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), newTransaction.paymentMethod.title)
+                    if let paymentMethod = try context.fetch(request).first {
+                        // Adding to Payment Method
+                        paymentMethod.addToTransactions(transaction)
+                    } else {
+                        // Creating new Payment Method
+                        let paymentMethod = NBCDTransactionPaymentMethod(context: context)
+                        paymentMethod.paymentMethodID = newTransaction.paymentMethod.id
+                        paymentMethod.title = newTransaction.paymentMethod.title
+                        paymentMethod.addToTransactions(transaction)
+                    }
                 }
                 if context.hasChanges {
                     try context.save()
@@ -141,6 +181,48 @@ extension NBCDManager {
                 debugPrint(#function, error)
                 completionHandler(.failure(error))
             }
+        }
+    }
+}
+
+extension NBCDManager {
+    func importTransactions(from filePath: URL, completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
+        do {
+            let data = try Data(contentsOf: filePath)
+            let lines = String(data: data, encoding: .utf8)?.components(separatedBy: "\r\n") ?? []
+            var transactionsToSave = [NBTransaction]()
+            for line in lines {
+                let components = line.components(separatedBy: ",").reversed()
+                guard let dateString = components.last, let date = Date.getDate(from: dateString, in: "dd/MM/yyyy") else { continue }
+                var tempTransaction = NBTransaction.NBTempTransaction(date: date)
+                var titleComponents: [String] = []
+                for (index, component) in components.enumerated() {
+                    guard index < components.count-1 else { break }
+                    switch index {
+                    case .zero:
+                        guard let amount = Double(component) else { break }
+                        tempTransaction.amount = abs(amount)
+                        if amount < .zero {
+                            tempTransaction.transactionType = .credit
+                        }
+                    case 1:
+                        tempTransaction.paymentMethod = .init(title: component)
+                    case 2:
+                        tempTransaction.expenseType = .init(rawValue: component.lowercased())
+                    case 3:
+                        tempTransaction.category = .init(rawValue: component.lowercased())
+                    default:
+                        titleComponents.insert(component, at: .zero)
+                    }
+                }
+                let title = titleComponents.joined(separator: ",")
+                tempTransaction.title = title.replacingOccurrences(of: " ", with: "").isEmpty == false ? title : nil
+                guard let transaction = tempTransaction.getTransaction() else { continue }
+                transactionsToSave.append(transaction)
+            }
+            saveTransactions(transactionsToSave, completionHandler: completionHandler)
+        } catch let error {
+            completionHandler(.failure(error))
         }
     }
 }

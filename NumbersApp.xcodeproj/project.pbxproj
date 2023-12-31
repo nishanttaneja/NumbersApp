@@ -12,6 +12,7 @@
 		B40602F72B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40602F62B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift */; };
 		B40EFD802B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40EFD7F2B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift */; };
 		B40EFD822B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = B40EFD812B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel */; };
+		B48301302B418F6700F1F9FF /* NBDateTimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483012F2B418F6700F1F9FF /* NBDateTimeManager.swift */; };
 		B4AB3C602B3DEC0E006EDFBE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C5F2B3DEC0E006EDFBE /* AppDelegate.swift */; };
 		B4AB3C622B3DEC0E006EDFBE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C612B3DEC0E006EDFBE /* SceneDelegate.swift */; };
 		B4AB3C692B3DEC10006EDFBE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4AB3C682B3DEC10006EDFBE /* Assets.xcassets */; };
@@ -37,6 +38,7 @@
 		B40EFD7E2B407EEA0058A447 /* NBDB v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NBDB v3.xcdatamodel"; sourceTree = "<group>"; };
 		B40EFD7F2B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCDTransactionPaymentMethodMigrationPolicy.swift; sourceTree = "<group>"; };
 		B40EFD812B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = NBCDTransactionPaymentMethodMappingModel.xcmappingmodel; sourceTree = "<group>"; };
+		B483012F2B418F6700F1F9FF /* NBDateTimeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBDateTimeManager.swift; sourceTree = "<group>"; };
 		B4AB3C5C2B3DEC0E006EDFBE /* NumbersApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NumbersApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4AB3C5F2B3DEC0E006EDFBE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B4AB3C612B3DEC0E006EDFBE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 			children = (
 				B404628F2B3FE754009D669C /* Persistent Storage */,
 				B4C37EC32B3F319E00731635 /* NBNCManager.swift */,
+				B483012F2B418F6700F1F9FF /* NBDateTimeManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -234,6 +237,7 @@
 				B4C37ECC2B3F543D00731635 /* Date+Extension.swift in Sources */,
 				B4AB3C7D2B3DF20A006EDFBE /* UIView+Extension.swift in Sources */,
 				B40EFD802B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift in Sources */,
+				B48301302B418F6700F1F9FF /* NBDateTimeManager.swift in Sources */,
 				B4C37EBD2B3F2DB500731635 /* NBDB.xcdatamodeld in Sources */,
 				B40462932B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel in Sources */,
 				B40462912B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift in Sources */,

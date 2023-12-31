@@ -12,7 +12,10 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
     private let defaultCellReuseIdentifier = "transactionDetail-NBTransactionsViewController"
     private var transactions: [NBTransaction] = []
     private var transactionsSeparatedByDate: [(dateString: String, transactions: [NBTransaction])] = []
+    
+    // MARK: Views
     private var transactionDetailViewController: NBTransactionDetailViewController?
+    private let documentPickerViewController = UIDocumentPickerViewController.init(forOpeningContentTypes: [.commaSeparatedText])
     
     private func updateTransactions(to newTransactions: [NBTransaction]) {
         DispatchQueue.main.async { [weak self] in
@@ -114,22 +117,65 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
         title = "Transactions"
         tableView.register(NBTransactionDetailTableViewCell.self, forCellReuseIdentifier: defaultCellReuseIdentifier)
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.setRightBarButton(UIBarButtonItem(systemItem: .add, primaryAction: UIAction(handler: { _ in
-            if self.transactionDetailViewController == nil {
-                self.transactionDetailViewController = NBTransactionDetailViewController()
-                self.transactionDetailViewController?.delegate = self
-            } else {
-                self.transactionDetailViewController?.addNewTransaction()
-            }
-            guard let addTransactionViewController = self.transactionDetailViewController else { return }
-            self.present(UINavigationController(rootViewController: addTransactionViewController), animated: true)
-        })), animated: true)
+        navigationItem.setRightBarButtonItems([
+            UIBarButtonItem(systemItem: .add, primaryAction: UIAction(handler: { _ in
+                if self.transactionDetailViewController == nil {
+                    self.transactionDetailViewController = NBTransactionDetailViewController()
+                    self.transactionDetailViewController?.delegate = self
+                } else {
+                    self.transactionDetailViewController?.addNewTransaction()
+                }
+                guard let addTransactionViewController = self.transactionDetailViewController else { return }
+                self.present(UINavigationController(rootViewController: addTransactionViewController), animated: true)
+            })),
+            UIBarButtonItem(title: "Import", primaryAction: UIAction(handler: { [weak self] _ in
+                guard let documentPickerViewController = self?.documentPickerViewController else { return }
+                self?.present(documentPickerViewController, animated: true)
+            }))
+        ], animated: true)
         loadTransactions()
+        configDocumentPickerViewController()
     }
     
     // MARK: AddTransactionDelegate
     func addTransaction(viewController: NBTransactionDetailViewController, didAddTransaction newTransaction: NBTransaction) {
         transactions.insert(newTransaction, at: .zero)
         tableView.insertRows(at: [IndexPath(row: .zero, section: .zero)], with: .automatic)
+    }
+}
+
+
+// MARK: - ImportTransactions
+extension NBTransactionsViewController: UIDocumentPickerDelegate {
+    private func configDocumentPickerViewController() {
+        documentPickerViewController.delegate = self
+    }
+    
+    // MARK: Delegate
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let fileUrl = urls.first else { return }
+        let alertController = UIAlertController(title: nil, message: "Importing transactions...", preferredStyle: .alert)
+        present(alertController, animated: true)
+        NBCDManager.shared.importTransactions(from: fileUrl) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    defer {
+                        DispatchQueue.main.asyncAfter(deadline: .now()+0.4) {
+                            alertController.dismiss(animated: true)
+                        }
+                    }
+                    alertController.message = "Found 0 transactions for import."
+                    guard success else { return }
+                    alertController.message = "Imported all transactions successfully."
+                    self?.loadTransactions()
+                case .failure(let failure):
+                    alertController.title = "Unable to import transactions"
+                    alertController.message = failure.localizedDescription
+                    alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
+                    self?.present(alertController, animated: true)
+                }
+            }
+        }
     }
 }
