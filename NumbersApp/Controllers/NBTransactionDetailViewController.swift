@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol NBTransactionDetailViewControllerDelegate: NSObjectProtocol {
+    func didUpdateTransaction(in detailViewController: NBTransactionDetailViewController)
+}
+
 final class NBTransactionDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NBTextFieldTableViewCellDelegate {
     // MARK: Properties
     private let textFieldCellReuseIdentifier = "textFieldCell-NBTransactionDetailViewController"
@@ -29,6 +33,7 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
     private let allowedTransactionTypes = NBTransaction.NBTransactionType.allCases
     private var currentTransactionType: NBTransaction.NBTransactionType = .debit
     private let insetsForTransactionTypeSegmentedControl = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+    weak var delegate: NBTransactionDetailViewControllerDelegate?
     
     // MARK: Views
     private let transactionTypeSegmentedControl = UISegmentedControl()
@@ -52,7 +57,9 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
                 switch result {
                 case .success(let success):
                     guard success else { return }
-                    NBNCManager.shared.postNotification(name: .NBCDManagerDidUpdateTransaction)
+                    if let self {
+                        self.delegate?.didUpdateTransaction(in: self)
+                    }
                     self?.dismiss(animated: true)
                 case .failure(let failure):
                     let alertController = UIAlertController(title: "Unable to save", message: failure.localizedDescription, preferredStyle: .alert)
@@ -133,12 +140,11 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
         addNewTransaction()
         configViews()
         configNavigationItem()
-        loadPaymentMethods()
-        configNotifications()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         transactionFieldsView.reloadSections(.init(integer: .zero), with: .automatic)
+        loadPaymentMethods()
     }
     private func configNavigationItem() {
         deleteTransactionBarButtonItem = UIBarButtonItem(systemItem: .trash, primaryAction: UIAction(handler: { [weak self] _ in
@@ -151,7 +157,9 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
                         let alertController = UIAlertController(title: "Transaction Deleted Successfully.", message: nil, preferredStyle: .alert)
                         self?.present(alertController, animated: true, completion: {
                             DispatchQueue.main.asyncAfter(deadline: .now()+0.4) {
-                                NBNCManager.shared.postNotification(name: .NBCDManagerDidUpdateTransaction)
+                                if let self {
+                                    self.delegate?.didUpdateTransaction(in: self)
+                                }
                                 alertController.dismiss(animated: true) {
                                     self?.dismiss(animated: true)
                                 }
@@ -282,16 +290,5 @@ extension NBTransactionDetailViewController {
                 }
             }
         }
-    }
-}
-
-
-// MARK: - Notification
-extension NBTransactionDetailViewController {
-    @objc private func handleCreateNewTransactionPaymentMethod(notification: Notification) {
-        loadPaymentMethods()
-    }
-    private func configNotifications() {
-        NBNCManager.shared.addObserver(self, selector: #selector(handleCreateNewTransactionPaymentMethod(notification:)), forNotification: .NBCDManagerDidCreateNewTransactionPaymentMethod)
     }
 }

@@ -51,24 +51,18 @@ extension NBCDManager {
                 // Fetching Payment Method
                 let request = NBCDTransactionPaymentMethod.fetchRequest()
                 request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.paymentMethodID), newTransaction.paymentMethod.id as CVarArg)
-                let createdNewPaymentMethod: Bool
                 if let paymentMethod = try context.fetch(request).first {
                     // Adding to Payment Method
                     paymentMethod.addToTransactions(transaction)
-                    createdNewPaymentMethod = false
                 } else {
                     // Creating new Payment Method
                     let paymentMethod = NBCDTransactionPaymentMethod(context: context)
                     paymentMethod.paymentMethodID = newTransaction.paymentMethod.id
                     paymentMethod.title = newTransaction.paymentMethod.title
                     paymentMethod.addToTransactions(transaction)
-                    createdNewPaymentMethod = true
                 }
                 if context.hasChanges {
                     try context.save()
-                    if createdNewPaymentMethod {
-                        NBNCManager.shared.postNotification(name: .NBCDManagerDidCreateNewTransactionPaymentMethod)
-                    }
                     completionHandler(.success(true))
                 } else {
                     completionHandler(.success(false))

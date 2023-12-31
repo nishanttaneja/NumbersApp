@@ -7,12 +7,12 @@
 
 import UIKit
 
-final class NBTransactionsViewController: UITableViewController {
+final class NBTransactionsViewController: UITableViewController, NBTransactionDetailViewControllerDelegate {
     // MARK: Properties
     private let defaultCellReuseIdentifier = "transactionDetail-NBTransactionsViewController"
     private var transactions: [NBTransaction] = []
     private var transactionsSeparatedByDate: [(dateString: String, transactions: [NBTransaction])] = []
-    private var addTransactionViewController: NBTransactionDetailViewController?
+    private var transactionDetailViewController: NBTransactionDetailViewController?
     
     private func updateTransactions(to newTransactions: [NBTransaction]) {
         DispatchQueue.main.async { [weak self] in
@@ -79,7 +79,7 @@ final class NBTransactionsViewController: UITableViewController {
                     switch result {
                     case .success(let success):
                         guard success else { return }
-                        NBNCManager.shared.postNotification(name: .NBCDManagerDidUpdateTransaction)
+                        self?.loadTransactions()
                     case .failure(let failure):
                         let alertController = UIAlertController(title: "Unable to delete transaction", message: failure.localizedDescription, preferredStyle: .alert)
                         alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
@@ -94,14 +94,19 @@ final class NBTransactionsViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return }
         let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
-        if addTransactionViewController == nil {
-            addTransactionViewController = NBTransactionDetailViewController()
+        if transactionDetailViewController == nil {
+            transactionDetailViewController = NBTransactionDetailViewController()
+            transactionDetailViewController?.delegate = self
         }
-        addTransactionViewController?.loadTransaction(having: transaction.id)
-        guard let addTransactionViewController else { return }
-        present(UINavigationController(rootViewController: addTransactionViewController), animated: true)
+        transactionDetailViewController?.loadTransaction(having: transaction.id)
+        guard let transactionDetailViewController else { return }
+        present(UINavigationController(rootViewController: transactionDetailViewController), animated: true)
     }
     
+    // MARK: TransactionDetail Delegate
+    func didUpdateTransaction(in detailViewController: NBTransactionDetailViewController) {
+        loadTransactions()
+    }
     
     // MARK: Lifecycle
     override func viewDidLoad() {
@@ -110,32 +115,20 @@ final class NBTransactionsViewController: UITableViewController {
         tableView.register(NBTransactionDetailTableViewCell.self, forCellReuseIdentifier: defaultCellReuseIdentifier)
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.setRightBarButton(UIBarButtonItem(systemItem: .add, primaryAction: UIAction(handler: { _ in
-            if self.addTransactionViewController == nil {
-                self.addTransactionViewController = NBTransactionDetailViewController()
+            if self.transactionDetailViewController == nil {
+                self.transactionDetailViewController = NBTransactionDetailViewController()
             } else {
-                self.addTransactionViewController?.addNewTransaction()
+                self.transactionDetailViewController?.addNewTransaction()
             }
-            guard let addTransactionViewController = self.addTransactionViewController else { return }
+            guard let addTransactionViewController = self.transactionDetailViewController else { return }
             self.present(UINavigationController(rootViewController: addTransactionViewController), animated: true)
         })), animated: true)
         loadTransactions()
-        addNotificationObservers()
     }
     
     // MARK: AddTransactionDelegate
     func addTransaction(viewController: NBTransactionDetailViewController, didAddTransaction newTransaction: NBTransaction) {
         transactions.insert(newTransaction, at: .zero)
         tableView.insertRows(at: [IndexPath(row: .zero, section: .zero)], with: .automatic)
-    }
-    
-    // MARK: NotificationCenterManager
-    @objc private func handleSaveNewTransaction(notification: Notification) {
-        loadTransactions()
-    }
-    private func addNotificationObservers() {
-        NBNCManager.shared.addObserver(self, selector: #selector(handleSaveNewTransaction(notification:)), forNotification: .NBCDManagerDidUpdateTransaction)
-    }
-    private func removeNotificationObservers() {
-        NBNCManager.shared.removeObserver(self, forNotification: .NBCDManagerDidUpdateTransaction)
     }
 }

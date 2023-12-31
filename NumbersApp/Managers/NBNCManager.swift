@@ -18,9 +18,9 @@ struct NBNCManager {
     
     private let notificationCenter = NotificationCenter.default
     
-    func postNotification(name: Notification.Name) {
-        notificationCenter.post(Notification(name: name))
-    }
+//    func postNotification(name: Notification.Name) {
+//        notificationCenter.post(Notification(name: name))
+//    }
     func addObserver(_ observer: Any, selector: Selector, forNotification name: Notification.Name) {
         notificationCenter.addObserver(observer, selector: selector, name: name, object: nil)
     }

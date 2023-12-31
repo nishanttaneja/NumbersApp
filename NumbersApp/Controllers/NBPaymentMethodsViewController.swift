@@ -31,18 +31,12 @@ final class NBPaymentMethodsViewController: UITableViewController {
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadPaymentMethods()
         configTableView()
-        configObservers()
         navigationController?.navigationBar.prefersLargeTitles = true
     }
-    
-    @objc private func handleTransactionOrPaymentMethodUpdate(notification: Notification) {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         loadPaymentMethods()
-    }
-    private func configObservers() {
-        NBNCManager.shared.addObserver(self, selector: #selector(handleTransactionOrPaymentMethodUpdate(notification:)), forNotification: .NBCDManagerDidUpdateTransaction)
-        NBNCManager.shared.addObserver(self, selector: #selector(handleTransactionOrPaymentMethodUpdate(notification:)), forNotification: .NBCDManagerDidCreateNewTransactionPaymentMethod)
     }
     
     // MARK: TableView
