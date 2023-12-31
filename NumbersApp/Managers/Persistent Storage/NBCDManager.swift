@@ -256,3 +256,178 @@ extension NBCDManager {
     }
     
 }
+
+
+// MARK: - CreditCardBill
+extension NBCDManager {
+    func saveCreditCardBill(_ newCreditCardBill: NBCreditCardBill, completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
+        persistentContainer.performBackgroundTask { context in
+            context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+            do {
+                // Creating Credit Card Bill
+                let creditCardBill = NBCDCreditCardBill(context: context)
+                creditCardBill.creditCardBillID = newCreditCardBill.id
+                creditCardBill.startDate = newCreditCardBill.startDate
+                creditCardBill.endDate = newCreditCardBill.endDate
+                creditCardBill.dueDate = newCreditCardBill.dueDate
+                creditCardBill.title = newCreditCardBill.title
+                creditCardBill.paymentStatus = newCreditCardBill.paymentStatus.rawValue
+                creditCardBill.amount = newCreditCardBill.amount
+                // Fetching Payment Method
+                let request = NBCDTransactionPaymentMethod.fetchRequest()
+                request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), newCreditCardBill.title)
+                let paymentMethods = try context.fetch(request)
+                if paymentMethods.isEmpty {
+                    // Creating new Payment Method
+                    let paymentMethod = NBCDTransactionPaymentMethod(context: context)
+                    paymentMethod.paymentMethodID = UUID()
+                    paymentMethod.title = newCreditCardBill.title
+                }
+                if context.hasChanges {
+                    try context.save()
+                    completionHandler(.success(true))
+                } else {
+                    completionHandler(.success(false))
+                }
+            } catch let error {
+                debugPrint(#function, error)
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    private func saveCreditCardBills(_ newCreditCardBills: [NBCreditCardBill], completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
+        persistentContainer.performBackgroundTask { context in
+            context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+            do {
+                for newCreditCardBill in newCreditCardBills {
+                    // Creating Transaction
+                    let creditCardBill = NBCDCreditCardBill(context: context)
+                    creditCardBill.creditCardBillID = newCreditCardBill.id
+                    creditCardBill.startDate = newCreditCardBill.startDate
+                    creditCardBill.endDate = newCreditCardBill.endDate
+                    creditCardBill.dueDate = newCreditCardBill.dueDate
+                    creditCardBill.title = newCreditCardBill.title
+                    creditCardBill.paymentStatus = newCreditCardBill.paymentStatus.rawValue
+                    creditCardBill.amount = newCreditCardBill.amount
+                    // Fetching Payment Method
+                    let request = NBCDTransactionPaymentMethod.fetchRequest()
+                    request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), newCreditCardBill.title)
+                    let paymentMethods = try context.fetch(request)
+                    if paymentMethods.isEmpty {
+                        // Creating new Payment Method
+                        let paymentMethod = NBCDTransactionPaymentMethod(context: context)
+                        paymentMethod.paymentMethodID = UUID()
+                        paymentMethod.title = newCreditCardBill.title
+                    }
+                }
+                if context.hasChanges {
+                    try context.save()
+                    completionHandler(.success(true))
+                } else {
+                    completionHandler(.success(false))
+                }
+            } catch let error {
+                debugPrint(#function, error)
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    func loadAllCreditCardBills(completionHandler: @escaping (_ result: Result<[NBCreditCardBill], Error>) -> Void) {
+        let request = NBCDCreditCardBill.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(NBCDCreditCardBill.dueDate), ascending: false)]
+        do {
+            let savedCreditCardBills = try persistentContainer.viewContext.fetch(request)
+            let creditCardBillsToDisplay: [NBCreditCardBill] = savedCreditCardBills.compactMap { savedCreditCardBill in
+                guard let creditCardBillId = savedCreditCardBill.creditCardBillID,
+                      let startDate = savedCreditCardBill.startDate,
+                      let endDate = savedCreditCardBill.endDate,
+                      let dueDate = savedCreditCardBill.dueDate,
+                      let title = savedCreditCardBill.title,
+                      let paymentStatusRawValue = savedCreditCardBill.paymentStatus, let paymentStatus = NBCreditCardBill.NBCreditCardBillPaymentStatus(rawValue: paymentStatusRawValue) else { return nil }
+                return NBCreditCardBill(id: creditCardBillId, startDate: startDate, endDate: endDate, dueDate: dueDate, title: title, amount: savedCreditCardBill.amount, paymentStatus: paymentStatus)
+            }
+            completionHandler(.success(creditCardBillsToDisplay))
+        } catch let error {
+            debugPrint(#function, error)
+            completionHandler(.failure(error))
+        }
+    }
+    func loadCreditCardBill(having id: UUID, completionHandler: @escaping (_ result: Result<NBCreditCardBill, Error>) -> Void) {
+        let request = NBCDCreditCardBill.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDCreditCardBill.creditCardBillID), id as CVarArg)
+        do {
+            let savedCreditCardBills = try persistentContainer.viewContext.fetch(request)
+            if savedCreditCardBills.count > 1 {
+                debugPrint(#function, "Multiple Credit Card Bills found for id \(id)")
+            }
+            guard let savedCreditCardBill = savedCreditCardBills.first,
+                  let creditCardBillId = savedCreditCardBill.creditCardBillID,
+                  let startDate = savedCreditCardBill.startDate,
+                  let endDate = savedCreditCardBill.endDate,
+                  let dueDate = savedCreditCardBill.dueDate,
+                  let title = savedCreditCardBill.title,
+                  let paymentStatusRawValue = savedCreditCardBill.paymentStatus, let paymentStatus = NBCreditCardBill.NBCreditCardBillPaymentStatus(rawValue: paymentStatusRawValue) else { throw NBCDError.noDataFound }
+            let creditCardBillToDisplay = NBCreditCardBill(id: creditCardBillId, startDate: startDate, endDate: endDate, dueDate: dueDate, title: title, amount: savedCreditCardBill.amount, paymentStatus: paymentStatus)
+            completionHandler(.success(creditCardBillToDisplay))
+        } catch let error {
+            debugPrint(#function, error)
+            completionHandler(.failure(error))
+        }
+    }
+    func deleteCreditCardBill(having id: UUID, completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
+        persistentContainer.performBackgroundTask { context in
+            let request = NBCDCreditCardBill.fetchRequest()
+            request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDCreditCardBill.creditCardBillID), id as CVarArg)
+            do {
+                let creditCardBillsToDelete = try context.fetch(request)
+                if creditCardBillsToDelete.count > 1 {
+                    debugPrint(#function, "Multiple credit card bills found for id \(id)")
+                }
+                creditCardBillsToDelete.forEach { creditCardBillToDelete in
+                    context.delete(creditCardBillToDelete)
+                }
+                if context.hasChanges {
+                    try context.save()
+                    completionHandler(.success(true))
+                } else {
+                    completionHandler(.success(false))
+                }
+            } catch let error {
+                debugPrint(#function, error)
+                completionHandler(.failure(error))
+            }
+        }
+    }
+}
+
+extension NBCDManager {
+    func importCreditCardBills(from filePath: URL, completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
+        do {
+            let data = try Data(contentsOf: filePath)
+            let lines = String(data: data, encoding: .utf8)?.components(separatedBy: "\r\n") ?? []
+            var creditCardBillsToSave = [NBCreditCardBill]()
+            for line in lines {
+                let components = line.components(separatedBy: ",")
+                var tempCreditCardBill = NBCreditCardBill.NBTempCreditCardBill()
+                for (index, component) in components.enumerated() {
+                    switch index {
+                    case .zero:
+                        guard let dueDate = Date.getDate(from: component, in: "dd/MM/yyyy") else { break }
+                        tempCreditCardBill.dueDate = dueDate
+                    case 1:
+                        tempCreditCardBill.title = component
+                    case 2:
+                        guard let amount = Double(component) else { break }
+                        tempCreditCardBill.amount = amount
+                    default: break
+                    }
+                }
+                guard let creditCardBill = tempCreditCardBill.getCreditCardBill() else { continue }
+                creditCardBillsToSave.append(creditCardBill)
+            }
+            saveCreditCardBills(creditCardBillsToSave, completionHandler: completionHandler)
+        } catch let error {
+            completionHandler(.failure(error))
+        }
+    }
+}

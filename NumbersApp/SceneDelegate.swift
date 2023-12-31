@@ -18,9 +18,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = UITabBarController()
         let paymentMethodsViewController = NBPaymentMethodsViewController(style: .grouped)
         paymentMethodsViewController.title = "Payment Methods"
+        let billsViewController = NBCreditCardBillsViewController(style: .grouped)
+        billsViewController.title = "Credit Card Bills"
         tabBarController.setViewControllers([
             UINavigationController(rootViewController: NBTransactionsViewController(style: .grouped)),
-            UINavigationController(rootViewController: paymentMethodsViewController)
+            UINavigationController(rootViewController: paymentMethodsViewController),
+            UINavigationController(rootViewController: billsViewController),
         ], animated: true)
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()

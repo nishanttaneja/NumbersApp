@@ -13,6 +13,10 @@
 		B40EFD802B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40EFD7F2B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift */; };
 		B40EFD822B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = B40EFD812B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel */; };
 		B48301302B418F6700F1F9FF /* NBDateTimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483012F2B418F6700F1F9FF /* NBDateTimeManager.swift */; };
+		B48301322B419D7300F1F9FF /* NBCreditCardBill.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48301312B419D7300F1F9FF /* NBCreditCardBill.swift */; };
+		B48301342B419DF800F1F9FF /* NBCreditCardBillsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48301332B419DF800F1F9FF /* NBCreditCardBillsViewController.swift */; };
+		B48301362B419FEA00F1F9FF /* NBCreditCardBillDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48301352B419FEA00F1F9FF /* NBCreditCardBillDetailCell.swift */; };
+		B48301382B41A5B800F1F9FF /* NBCreditCardBillDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48301372B41A5B800F1F9FF /* NBCreditCardBillDetailViewController.swift */; };
 		B4AB3C602B3DEC0E006EDFBE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C5F2B3DEC0E006EDFBE /* AppDelegate.swift */; };
 		B4AB3C622B3DEC0E006EDFBE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C612B3DEC0E006EDFBE /* SceneDelegate.swift */; };
 		B4AB3C692B3DEC10006EDFBE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4AB3C682B3DEC10006EDFBE /* Assets.xcassets */; };
@@ -39,6 +43,11 @@
 		B40EFD7F2B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCDTransactionPaymentMethodMigrationPolicy.swift; sourceTree = "<group>"; };
 		B40EFD812B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = NBCDTransactionPaymentMethodMappingModel.xcmappingmodel; sourceTree = "<group>"; };
 		B483012F2B418F6700F1F9FF /* NBDateTimeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBDateTimeManager.swift; sourceTree = "<group>"; };
+		B48301312B419D7300F1F9FF /* NBCreditCardBill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCreditCardBill.swift; sourceTree = "<group>"; };
+		B48301332B419DF800F1F9FF /* NBCreditCardBillsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCreditCardBillsViewController.swift; sourceTree = "<group>"; };
+		B48301352B419FEA00F1F9FF /* NBCreditCardBillDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCreditCardBillDetailCell.swift; sourceTree = "<group>"; };
+		B48301372B41A5B800F1F9FF /* NBCreditCardBillDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCreditCardBillDetailViewController.swift; sourceTree = "<group>"; };
+		B48301392B41B14A00F1F9FF /* NBDB v4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NBDB v4.xcdatamodel"; sourceTree = "<group>"; };
 		B4AB3C5C2B3DEC0E006EDFBE /* NumbersApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NumbersApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4AB3C5F2B3DEC0E006EDFBE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B4AB3C612B3DEC0E006EDFBE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -119,6 +128,7 @@
 			children = (
 				B4AB3C742B3DECA7006EDFBE /* NBTransaction.swift */,
 				B4C37EBB2B3F2DB500731635 /* NBDB.xcdatamodeld */,
+				B48301312B419D7300F1F9FF /* NBCreditCardBill.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -129,6 +139,8 @@
 				B4AB3C772B3DF168006EDFBE /* NBTransactionsViewController.swift */,
 				B40602F62B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift */,
 				B4AB3C792B3DF17A006EDFBE /* NBTransactionDetailViewController.swift */,
+				B48301332B419DF800F1F9FF /* NBCreditCardBillsViewController.swift */,
+				B48301372B41A5B800F1F9FF /* NBCreditCardBillDetailViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -148,6 +160,7 @@
 				B4AB3C7F2B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift */,
 				B4AB3C852B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift */,
 				B4C37EC52B3F3F3F00731635 /* NBTransactionDetailTableViewCell.swift */,
+				B48301352B419FEA00F1F9FF /* NBCreditCardBillDetailCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -232,8 +245,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B48301382B41A5B800F1F9FF /* NBCreditCardBillDetailViewController.swift in Sources */,
 				B4AB3C802B3DF36B006EDFBE /* NBTextFieldTableViewCell.swift in Sources */,
+				B48301322B419D7300F1F9FF /* NBCreditCardBill.swift in Sources */,
 				B4C37EC62B3F3F3F00731635 /* NBTransactionDetailTableViewCell.swift in Sources */,
+				B48301342B419DF800F1F9FF /* NBCreditCardBillsViewController.swift in Sources */,
 				B4C37ECC2B3F543D00731635 /* Date+Extension.swift in Sources */,
 				B4AB3C7D2B3DF20A006EDFBE /* UIView+Extension.swift in Sources */,
 				B40EFD802B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift in Sources */,
@@ -248,6 +264,7 @@
 				B4AB3C602B3DEC0E006EDFBE /* AppDelegate.swift in Sources */,
 				B4AB3C782B3DF168006EDFBE /* NBTransactionsViewController.swift in Sources */,
 				B4AB3C622B3DEC0E006EDFBE /* SceneDelegate.swift in Sources */,
+				B48301362B419FEA00F1F9FF /* NBCreditCardBillDetailCell.swift in Sources */,
 				B4AB3C862B3E02DC006EDFBE /* NBButtonHeaderFooterView.swift in Sources */,
 				B40602F72B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift in Sources */,
 				B4AB3C7A2B3DF17A006EDFBE /* NBTransactionDetailViewController.swift in Sources */,
@@ -472,11 +489,12 @@
 		B4C37EBB2B3F2DB500731635 /* NBDB.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				B48301392B41B14A00F1F9FF /* NBDB v4.xcdatamodel */,
 				B40EFD7E2B407EEA0058A447 /* NBDB v3.xcdatamodel */,
 				B404628E2B3FE6E2009D669C /* NBDB v2.xcdatamodel */,
 				B4C37EBC2B3F2DB500731635 /* NBDB.xcdatamodel */,
 			);
-			currentVersion = B40EFD7E2B407EEA0058A447 /* NBDB v3.xcdatamodel */;
+			currentVersion = B48301392B41B14A00F1F9FF /* NBDB v4.xcdatamodel */;
 			path = NBDB.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
