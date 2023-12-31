@@ -70,7 +70,7 @@ final class NBTextFieldTableViewCell: UITableViewCell, UIPickerViewDataSource, U
                 self.delegate?.textField(tableViewCell: self, didUpdateValueTo: amount, usingPickerOptionAt: nil)
             } else {
                 if self.textField.text?.replacingOccurrences(of: " ", with: "").isEmpty == false,
-                   let text = self.textField.text, let value = self.values.first(where: { $0.value == self.textField.text }) {
+                   let text = self.textField.text, let value = self.values.first(where: { $0.value == text }) {
                     self.delegate?.textField(tableViewCell: self, didUpdateValueTo: value.key, usingPickerOptionAt: self.values.firstIndex(where: { $0.key == value.key } ))
                 } else {
                     self.delegate?.textField(tableViewCell: self, didUpdateValueTo: self.textField.text as Any, usingPickerOptionAt: nil)

@@ -117,6 +117,7 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
         navigationItem.setRightBarButton(UIBarButtonItem(systemItem: .add, primaryAction: UIAction(handler: { _ in
             if self.transactionDetailViewController == nil {
                 self.transactionDetailViewController = NBTransactionDetailViewController()
+                self.transactionDetailViewController?.delegate = self
             } else {
                 self.transactionDetailViewController?.addNewTransaction()
             }
