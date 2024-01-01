@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23B92" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="NBCDCreditCardBill" representedClassName="NBCDCreditCardBill" syncable="YES" codeGenerationType="class">
+        <attribute name="amount" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="creditCardBillID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="dueDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="endDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="paymentStatus" attributeType="String"/>
+        <attribute name="startDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="creditCardBillID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="NBCDTransaction" representedClassName="NBCDTransaction" syncable="YES" codeGenerationType="class">
+        <attribute name="amount" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="category" attributeType="String"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="expenseType" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="transactionID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="transactionType" attributeType="String"/>
+        <relationship name="paymentMethod" maxCount="1" deletionRule="Nullify" destinationEntity="NBCDTransactionPaymentMethod" inverseName="transactions" inverseEntity="NBCDTransactionPaymentMethod"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="transactionID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="NBCDTransactionPaymentMethod" representedClassName="NBCDTransactionPaymentMethod" syncable="YES" codeGenerationType="class">
+        <attribute name="paymentMethodID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="transactions" toMany="YES" deletionRule="Nullify" destinationEntity="NBCDTransaction" inverseName="paymentMethod" inverseEntity="NBCDTransaction"/>
+    </entity>
+</model>

@@ -12,11 +12,11 @@ struct NBTransaction {
     // MARK: Category
     enum NBTransactionCategory: String, CaseIterable {
         case bike, car, clothing, education, entertainment
-        case foodAndDrinks = "Food & Drinks"
+        case foodAndDrinks = "food & drinks"
         case gifts
-        case healthAndFitness = "Health & Fitness"
+        case healthAndFitness = "health & fitness"
         case metro, others, rickshaw, scooty
-        case selfCare = "Self Care"
+        case selfCare = "self care"
         case utilities
     }
     
