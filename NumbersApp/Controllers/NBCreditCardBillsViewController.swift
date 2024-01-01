@@ -38,7 +38,7 @@ final class NBCreditCardBillsViewController: UITableViewController, NBCreditCard
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         guard creditCardBillsSepartedByMonth.count > section else { return nil }
-        return creditCardBillsSepartedByMonth[section].dueDate.formatted(date: .abbreviated, time: .omitted)
+        return creditCardBillsSepartedByMonth[section].dueDate.formatted(date: .complete, time: .omitted)
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -86,13 +86,6 @@ final class NBCreditCardBillsViewController: UITableViewController, NBCreditCard
     // MARK: Configurations
     private func updateCreditCardBills(to newCreditCardBills: [NBCreditCardBill]) {
         DispatchQueue.main.async { [weak self] in
-//            for transaction in newTransactions {
-//                if let indexOfDateForExistingTransactions = self?.transactionsSeparatedByDate.firstIndex(where: { $0.dateString == transaction.date.formatted(date: .abbreviated, time: .omitted) }) {
-//                    self?.transactionsSeparatedByDate[indexOfDateForExistingTransactions].transactions.append(transaction)
-//                } else {
-//                    self?.transactionsSeparatedByDate.append((dateString: transaction.date.formatted(date: .abbreviated, time: .omitted), transactions: [transaction]))
-//                }
-//            }
             self?.creditCardBillsSepartedByMonth.removeAll()
             self?.creditCardBills = newCreditCardBills
             for creditCardBill in newCreditCardBills {
