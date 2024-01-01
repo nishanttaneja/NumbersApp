@@ -33,12 +33,12 @@ final class NBCreditCardBillsViewController: UITableViewController, NBCreditCard
         let bill = creditCardBillsSepartedByMonth[indexPath.section].bills[indexPath.row]
         detailCell.textLabel?.text = bill.title
         detailCell.detailTextLabel?.text = "\(bill.amount < .zero ? "+ " : "")₹" + String(format: "%.2f", abs(bill.amount))
-        detailCell.detailTextLabel?.textColor = bill.amount < .zero ? .systemGreen : .systemGray
+        detailCell.detailTextLabel?.textColor = bill.paymentStatus == .paid ? .systemGray : .systemRed
         return detailCell
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         guard creditCardBillsSepartedByMonth.count > section else { return nil }
-        return creditCardBillsSepartedByMonth[section].dueDate.formatted(date: .abbreviated, time: .omitted)
+        return creditCardBillsSepartedByMonth[section].dueDate.formatted(date: .complete, time: .omitted)
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -86,13 +86,6 @@ final class NBCreditCardBillsViewController: UITableViewController, NBCreditCard
     // MARK: Configurations
     private func updateCreditCardBills(to newCreditCardBills: [NBCreditCardBill]) {
         DispatchQueue.main.async { [weak self] in
-//            for transaction in newTransactions {
-//                if let indexOfDateForExistingTransactions = self?.transactionsSeparatedByDate.firstIndex(where: { $0.dateString == transaction.date.formatted(date: .abbreviated, time: .omitted) }) {
-//                    self?.transactionsSeparatedByDate[indexOfDateForExistingTransactions].transactions.append(transaction)
-//                } else {
-//                    self?.transactionsSeparatedByDate.append((dateString: transaction.date.formatted(date: .abbreviated, time: .omitted), transactions: [transaction]))
-//                }
-//            }
             self?.creditCardBillsSepartedByMonth.removeAll()
             self?.creditCardBills = newCreditCardBills
             for creditCardBill in newCreditCardBills {
@@ -129,9 +122,9 @@ extension NBCreditCardBillsViewController: UIDocumentPickerDelegate {
     // MARK: Delegate
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let fileUrl = urls.first else { return }
-        let alertController = UIAlertController(title: nil, message: "Importing transactions...", preferredStyle: .alert)
+        let alertController = UIAlertController(title: nil, message: "Importing credit card bills...", preferredStyle: .alert)
         present(alertController, animated: true)
-        NBCDManager.shared.importTransactions(from: fileUrl) { [weak self] result in
+        NBCDManager.shared.importCreditCardBills(from: fileUrl) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let success):
@@ -140,12 +133,12 @@ extension NBCreditCardBillsViewController: UIDocumentPickerDelegate {
                             alertController.dismiss(animated: true)
                         }
                     }
-                    alertController.message = "Found 0 transactions for import."
+                    alertController.message = "Found 0 credit card bills for import."
                     guard success else { return }
-                    alertController.message = "Imported all transactions successfully."
+                    alertController.message = "Imported all credit card bills successfully."
                     self?.loadCreditCardBills()
                 case .failure(let failure):
-                    alertController.title = "Unable to import transactions"
+                    alertController.title = "Unable to import credit card bills"
                     alertController.message = failure.localizedDescription
                     alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
                     self?.present(alertController, animated: true)

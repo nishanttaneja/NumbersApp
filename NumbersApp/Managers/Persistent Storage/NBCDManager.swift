@@ -416,13 +416,22 @@ extension NBCDManager {
                 for (index, component) in components.enumerated() {
                     switch index {
                     case .zero:
+                        guard let startDate = Date.getDate(from: component, in: "dd/MM/yyyy") else { break }
+                        tempCreditCardBill.startDate = startDate
+                    case 1:
+                        guard let endDate = Date.getDate(from: component, in: "dd/MM/yyyy") else { break }
+                        tempCreditCardBill.endDate = endDate
+                    case 2:
                         guard let dueDate = Date.getDate(from: component, in: "dd/MM/yyyy") else { break }
                         tempCreditCardBill.dueDate = dueDate
-                    case 1:
+                    case 3:
                         tempCreditCardBill.title = component
-                    case 2:
+                    case 4:
                         guard let amount = Double(component) else { break }
                         tempCreditCardBill.amount = amount
+                    case 5:
+                        guard let paidAmount = Double(component) else { continue }
+                        tempCreditCardBill.paymentStatus = paidAmount == tempCreditCardBill.amount ? .paid : .due
                     default: break
                     }
                 }
