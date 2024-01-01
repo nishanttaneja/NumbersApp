@@ -13,7 +13,7 @@ final class NBCDManager {
     static let shared = NBCDManager()
     
     enum NBCDError: Error {
-        case noDataFound
+        case noDataFound, noPermission
     }
     
     private lazy var persistentContainer: NSPersistentContainer = {
@@ -188,7 +188,9 @@ extension NBCDManager {
 extension NBCDManager {
     func importTransactions(from filePath: URL, completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
         do {
+            guard filePath.startAccessingSecurityScopedResource() else { throw NBCDError.noPermission }
             let data = try Data(contentsOf: filePath)
+            filePath.stopAccessingSecurityScopedResource()
             let lines = String(data: data, encoding: .utf8)?.components(separatedBy: "\r\n") ?? []
             var transactionsToSave = [NBTransaction]()
             for line in lines {
@@ -403,7 +405,9 @@ extension NBCDManager {
 extension NBCDManager {
     func importCreditCardBills(from filePath: URL, completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
         do {
+            guard filePath.startAccessingSecurityScopedResource() else { throw NBCDError.noPermission }
             let data = try Data(contentsOf: filePath)
+            filePath.stopAccessingSecurityScopedResource()
             let lines = String(data: data, encoding: .utf8)?.components(separatedBy: "\r\n") ?? []
             var creditCardBillsToSave = [NBCreditCardBill]()
             for line in lines {
