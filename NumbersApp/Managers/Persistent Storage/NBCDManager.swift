@@ -159,6 +159,31 @@ extension NBCDManager {
             completionHandler(.failure(error))
         }
     }
+    func loadAllTransactions(havingPaymentMethod paymentMethodTitle: String, startDate: Date, completionHandler: @escaping (_ result: Result<[NBTransaction], Error>) -> Void) {
+        let request = NBCDTransaction.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(NBCDTransaction.date), ascending: false)]
+        let paymentMethodTitlePredicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransaction.paymentMethod.title), paymentMethodTitle)
+        let startDatePredicate = NSPredicate(format: "%K > %@", #keyPath(NBCDTransaction.date), startDate as CVarArg)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [paymentMethodTitlePredicate, startDatePredicate])
+        do {
+            let savedTransactions = try persistentContainer.viewContext.fetch(request)
+            let transactionsToDisplay: [NBTransaction] = savedTransactions.compactMap { savedTransaction in
+                guard let transactionId = savedTransaction.transactionID,
+                      let date = savedTransaction.date,
+                      let title = savedTransaction.title,
+                      let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
+                      let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
+                      let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue),
+                      let paymentMethodId = savedTransaction.paymentMethod?.paymentMethodID, let paymentMethodTitle = savedTransaction.paymentMethod?.title else { return nil }
+                let paymentMethod = NBTransaction.NBTransactionPaymentMethod(id: paymentMethodId, title: paymentMethodTitle)
+                return NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: savedTransaction.amount)
+            }
+            completionHandler(.success(transactionsToDisplay))
+        } catch let error {
+            debugPrint(#function, error)
+            completionHandler(.failure(error))
+        }
+    }
     func deleteTransaction(having id: UUID, completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
         persistentContainer.performBackgroundTask { context in
             let request = NBCDTransaction.fetchRequest()
@@ -256,7 +281,6 @@ extension NBCDManager {
             completionHandler(.failure(error))
         }
     }
-    
 }
 
 
