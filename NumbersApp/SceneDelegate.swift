@@ -18,8 +18,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = UITabBarController()
         let paymentMethodsViewController = NBPaymentMethodsViewController(style: .grouped)
         paymentMethodsViewController.title = "Payment Methods"
-        let billsViewController = NBCreditCardBillsViewController(style: .grouped)
+        let billsViewController = NBCreditCardBillsViewController()
         billsViewController.title = "Credit Card Bills"
+        billsViewController.loadViewIfNeeded()
         tabBarController.setViewControllers([
             UINavigationController(rootViewController: NBTransactionsViewController(style: .grouped)),
             UINavigationController(rootViewController: paymentMethodsViewController),
