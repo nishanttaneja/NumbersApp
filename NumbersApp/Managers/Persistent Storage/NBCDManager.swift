@@ -47,7 +47,7 @@ extension NBCDManager {
                 transaction.transactionType = newTransaction.transactionType.rawValue
                 transaction.category = newTransaction.category.rawValue
                 transaction.expenseType = newTransaction.expenseType.rawValue
-                transaction.amount = newTransaction.amount
+                transaction.amount = (newTransaction.transactionType == .debit ? 1 : -1) * newTransaction.amount
                 // Fetching Payment Method
                 let request = NBCDTransactionPaymentMethod.fetchRequest()
                 request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), newTransaction.paymentMethod.title)
@@ -86,7 +86,7 @@ extension NBCDManager {
                     transaction.transactionType = newTransaction.transactionType.rawValue
                     transaction.category = newTransaction.category.rawValue
                     transaction.expenseType = newTransaction.expenseType.rawValue
-                    transaction.amount = newTransaction.amount
+                    transaction.amount = (newTransaction.transactionType == .debit ? 1 : -1) * newTransaction.amount
                     // Fetching Payment Method
                     let request = NBCDTransactionPaymentMethod.fetchRequest()
                     request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), newTransaction.paymentMethod.title)
@@ -203,7 +203,7 @@ extension NBCDManager {
                     switch index {
                     case .zero:
                         guard let amount = Double(component) else { break }
-                        tempTransaction.amount = abs(amount)
+                        tempTransaction.amount = amount
                         if amount < .zero {
                             tempTransaction.transactionType = .credit
                         }

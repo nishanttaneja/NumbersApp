@@ -233,9 +233,6 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
             let expenseType = expenseTypes[index]
             tempTransaction?.expenseType = expenseType
         case .paymentMethod:
-//            guard let index, index < paymentMethods.count else { return }
-//            let paymentMethod = paymentMethods[index]
-//            tempTransaction?.paymentMethod = paymentMethod
             guard let newValue = newValue as? String else { return }
             let paymentMethod = paymentMethods.first(where: { $0.id.uuidString == newValue }) ?? NBTransaction.NBTransactionPaymentMethod(title: newValue)
             tempTransaction?.paymentMethod = paymentMethod
