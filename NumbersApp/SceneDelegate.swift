@@ -16,14 +16,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
         let tabBarController = UITabBarController()
-        let paymentMethodsViewController = NBPaymentMethodsViewController(style: .grouped)
-        paymentMethodsViewController.title = "Payment Methods"
         let billsViewController = NBCreditCardBillsViewController()
-        billsViewController.title = "Credit Card Bills"
         billsViewController.loadViewIfNeeded()
         tabBarController.setViewControllers([
             UINavigationController(rootViewController: NBTransactionsViewController(style: .grouped)),
-            UINavigationController(rootViewController: paymentMethodsViewController),
             UINavigationController(rootViewController: billsViewController),
         ], animated: true)
         window?.rootViewController = tabBarController

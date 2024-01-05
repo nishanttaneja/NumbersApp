@@ -58,7 +58,7 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
         let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
         cell.textLabel?.text = transaction.title
         cell.textLabel?.numberOfLines = .zero
-        cell.detailTextLabel?.text = "\(transaction.transactionType == .credit ? "+ " : "")₹" + String(format: "%.2f", transaction.amount)
+        cell.detailTextLabel?.text = "\(transaction.transactionType == .credit ? "+ " : "")₹" + String(format: "%.2f", abs(transaction.amount))
         cell.detailTextLabel?.textColor = transaction.transactionType == .credit ? .systemGreen : .systemGray
         return cell
     }
@@ -115,6 +115,7 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Transactions"
+        tabBarItem = .init(title: title, image: .init(systemName: "list.clipboard"), tag: .zero)
         tableView.register(NBTransactionDetailTableViewCell.self, forCellReuseIdentifier: defaultCellReuseIdentifier)
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.setRightBarButtonItems([

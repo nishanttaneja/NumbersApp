@@ -143,6 +143,8 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Credit Card Bills"
+        tabBarItem = .init(title: title, image: .init(systemName: "creditcard.trianglebadge.exclamationmark"), tag: 1)
         configViews()
         loadCreditCardBills()
     }
