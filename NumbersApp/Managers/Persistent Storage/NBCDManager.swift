@@ -47,7 +47,7 @@ extension NBCDManager {
                 transaction.transactionType = newTransaction.transactionType.rawValue
                 transaction.category = newTransaction.category.rawValue
                 transaction.expenseType = newTransaction.expenseType.rawValue
-                transaction.amount = (newTransaction.transactionType == .debit ? 1 : -1) * newTransaction.amount
+                transaction.amount = newTransaction.amount
                 // Fetching Payment Method
                 let request = NBCDTransactionPaymentMethod.fetchRequest()
                 request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), newTransaction.paymentMethod.title)

@@ -75,13 +75,10 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
         allowedTransactionTypes.reversed().forEach { transactionType in
             transactionTypeSegmentedControl.insertSegment(action: UIAction(title: transactionType.title, handler: { _ in
                 guard transactionType != self.currentTransactionType else { return }
-                switch transactionType {
-                case .debit:
-                    self.currentTransactionType = .debit
-                    self.tempTransaction?.transactionType = .debit
-                case .credit:
-                    self.currentTransactionType = .credit
-                    self.tempTransaction?.transactionType = .credit
+                self.currentTransactionType = transactionType
+                self.tempTransaction?.transactionType = transactionType
+                if let amount = self.tempTransaction?.amount {
+                    self.tempTransaction?.amount = (transactionType == .credit ? -1 : 1) * abs(amount)
                 }
                 self.toggleSaveTransactionButtonIfNeeded()
                 self.transactionFieldsView.reloadSections(.init(integer: .zero), with: .automatic)
@@ -210,7 +207,11 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
             }
         case .amount:
             textFieldCell.setKeyboardType(.decimalPad)
-            textFieldCell.set(amount: tempTransaction?.amount)
+            if let amount = tempTransaction?.amount {
+                textFieldCell.set(amount: abs(amount))
+            } else {
+                textFieldCell.set(amount: nil)
+            }
         }
         return textFieldCell
     }
@@ -237,7 +238,8 @@ final class NBTransactionDetailViewController: UIViewController, UITableViewData
             let paymentMethod = paymentMethods.first(where: { $0.id.uuidString == newValue }) ?? NBTransaction.NBTransactionPaymentMethod(title: newValue)
             tempTransaction?.paymentMethod = paymentMethod
         case .amount:
-            tempTransaction?.amount = newValue as? Double
+            guard let amount = newValue as? Double, let transactionType = tempTransaction?.transactionType else { return }
+            tempTransaction?.amount = (transactionType == .credit ? -1 : 1) * abs(amount)
         }
         toggleSaveTransactionButtonIfNeeded()
     }
