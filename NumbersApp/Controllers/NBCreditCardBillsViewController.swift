@@ -22,18 +22,27 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
     private var currentViewType: NBViewType = .pendingBills
     private let insetsForViewTypeSegmentedControl = UIEdgeInsets(top: 8, left: 16, bottom: 4, right: 16)
     private let insetsForTableView = UIEdgeInsets(top: 4, left: .zero, bottom: 4, right: .zero)
+    private let canEditBill: Bool = false
     
     // MARK: Views
     private var creditCardBillDetailViewController: NBCreditCardBillDetailViewController?
     private let documentPickerViewController = UIDocumentPickerViewController.init(forOpeningContentTypes: [.commaSeparatedText])
     private let tableView = UITableView(frame: .zero, style: .grouped)
     private let viewTypeSegmentedControl = UISegmentedControl()
+    private let totalAmountLabel: UILabel = {
+        let label = UILabel(frame: .init(x: .zero, y: .zero, width: 500, height: .zero))
+        label.textAlignment = .left
+        label.textColor = .tertiaryLabel
+        label.font = .systemFont(ofSize: 17, weight: .bold)
+        return label
+    }()
     
     // MARK: ViewTypes
     private func setViewType(_ newViewType: NBViewType) {
         DispatchQueue.main.async { [weak self] in
             guard let creditCardBills = self?.creditCardBills else { return }
             self?.itemsToDisplaySeparatedByMonth.removeAll()
+            var totalAmount: Double = .zero
             switch newViewType {
             case .allBills, .pendingBills:
                 for creditCardBill in creditCardBills {
@@ -43,6 +52,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
                     } else {
                         self?.itemsToDisplaySeparatedByMonth.append((dueDate: creditCardBill.dueDate, bills: [creditCardBill]))
                     }
+                    totalAmount += creditCardBill.amount
                 }
                 if newViewType == .pendingBills {
                     self?.itemsToDisplaySeparatedByMonth.reverse()
@@ -65,6 +75,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
                                 partialResult + nextTransaction.amount
                             }
                             let outstandingBill = NBCreditCardBill(startDate: .now, endDate: .now, dueDate: .now, title: creditCardBill.title, amount: totalOutstandingsAmount)
+                            totalAmount += totalOutstandingsAmount
                             latestBills.append(outstandingBill)
                             remainingPaymentMethodTitles.removeAll(where: { outstandingBill.title == $0 })
                             if remainingPaymentMethodTitles.isEmpty {
@@ -80,6 +91,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
                     }
                 }
             }
+            self?.totalAmountLabel.text = newViewType == .allBills ? nil : "₹" + totalAmount.formatted()
             self?.tableView.reloadData()
             self?.currentViewType = newViewType
         }
@@ -114,7 +126,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
               itemsToDisplaySeparatedByMonth[indexPath.section].bills.count > indexPath.row else { return cell }
         let bill = itemsToDisplaySeparatedByMonth[indexPath.section].bills[indexPath.row]
         detailCell.textLabel?.text = bill.title
-        detailCell.detailTextLabel?.text = "\(bill.amount < .zero ? "+ " : "")₹" + String(format: "%.2f", abs(bill.amount))
+        detailCell.detailTextLabel?.text = bill.amountDescription
         detailCell.detailTextLabel?.textColor = bill.paymentStatus == .paid ? .systemGray : .systemRed
         return detailCell
     }
@@ -124,15 +136,40 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        guard currentViewType != .totalOutstandings, canEditBill else { return }
         guard indexPath.section < itemsToDisplaySeparatedByMonth.count, indexPath.row < itemsToDisplaySeparatedByMonth[indexPath.section].bills.count else { return }
-        let transaction = itemsToDisplaySeparatedByMonth[indexPath.section].bills[indexPath.row]
+        let creditCardBill = itemsToDisplaySeparatedByMonth[indexPath.section].bills[indexPath.row]
         if creditCardBillDetailViewController == nil {
             creditCardBillDetailViewController = NBCreditCardBillDetailViewController()
             creditCardBillDetailViewController?.delegate = self
         }
-        creditCardBillDetailViewController?.loadCreditCardBill(having: transaction.id)
+        creditCardBillDetailViewController?.loadCreditCardBill(having: creditCardBill.id)
         guard let creditCardBillDetailViewController else { return }
         present(UINavigationController(rootViewController: creditCardBillDetailViewController), animated: true)
+    }
+
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard currentViewType != .totalOutstandings else { return nil }
+        guard indexPath.section < itemsToDisplaySeparatedByMonth.count, indexPath.row < itemsToDisplaySeparatedByMonth[indexPath.section].bills.count else { return nil }
+        let creditCardBill = itemsToDisplaySeparatedByMonth[indexPath.section].bills[indexPath.row]
+        var tempBill = NBCreditCardBill.NBTempCreditCardBill(creditCardBill: creditCardBill)
+        tempBill.paymentStatus = creditCardBill.paymentStatus == .due ? .paid : .due
+        guard let billToSave = tempBill.getCreditCardBill() else { return nil }
+        let billAction = UIContextualAction(style: .normal, title: creditCardBill.paymentStatus == .due ? "Paid" : "Due", handler: { action, view, completionHandler in
+            NBCDManager.shared.saveCreditCardBill(billToSave) { result in
+                switch result {
+                case .success:
+                    DispatchQueue.main.async {
+                        self.loadCreditCardBills()
+                    }
+                case .failure(let failure):
+                    debugPrint(#function, failure)
+                }
+            }
+            completionHandler(true)
+        })
+        billAction.backgroundColor = creditCardBill.paymentStatus == .due ? .systemGreen : .systemRed
+        return UISwipeActionsConfiguration(actions: [billAction])
     }
     
     // MARK: CreditCardBillDetail Delegate
@@ -167,11 +204,12 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
                 guard let creditCardBillDetailViewController = self.creditCardBillDetailViewController else { return }
                 self.present(UINavigationController(rootViewController: creditCardBillDetailViewController), animated: true)
             })),
-            UIBarButtonItem(title: "Import", primaryAction: UIAction(handler: { [weak self] _ in
+            UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.down"), primaryAction: UIAction(handler: { [weak self] _ in
                 guard let documentPickerViewController = self?.documentPickerViewController else { return }
                 self?.present(documentPickerViewController, animated: true)
             }))
         ], animated: true)
+        navigationItem.titleView = totalAmountLabel
     }
     private func configViews() {
         view.backgroundColor = tableView.backgroundColor

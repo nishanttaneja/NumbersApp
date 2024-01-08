@@ -454,7 +454,7 @@ extension NBCDManager {
                         guard let amount = Double(component) else { break }
                         tempCreditCardBill.amount = amount
                     case 5:
-                        guard let paidAmount = Double(component) else { continue }
+                        guard let paidAmount = Double(component) else { break }
                         tempCreditCardBill.paymentStatus = paidAmount == tempCreditCardBill.amount ? .paid : .due
                     default: break
                     }

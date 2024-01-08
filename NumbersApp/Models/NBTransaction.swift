@@ -162,3 +162,10 @@ extension NBTransaction.NBTransactionPaymentMethod {
         }
     }
 }
+
+// MARK: - Amount Description
+extension NBTransaction {
+    var amountDescription: String {
+        (transactionType == .credit ? "+ " : "") + "₹" + abs(amount).formatted()
+    }
+}
