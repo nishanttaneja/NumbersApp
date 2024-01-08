@@ -69,3 +69,11 @@ extension NBCreditCardBill.NBCreditCardBillPaymentStatus {
         rawValue.capitalized
     }
 }
+
+
+// MARK: Amount Description
+extension NBCreditCardBill {
+    var amountDescription: String {
+        (amount < .zero ? "+ " : "") + "₹" + abs(amount).formatted()
+    }
+}

@@ -58,7 +58,7 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
         let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
         cell.textLabel?.text = transaction.title
         cell.textLabel?.numberOfLines = .zero
-        cell.detailTextLabel?.text = "\(transaction.transactionType == .credit ? "+ " : "")₹" + String(format: "%.2f", abs(transaction.amount))
+        cell.detailTextLabel?.text = transaction.amountDescription
         cell.detailTextLabel?.textColor = transaction.transactionType == .credit ? .systemGreen : .systemGray
         return cell
     }

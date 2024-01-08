@@ -114,7 +114,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
               itemsToDisplaySeparatedByMonth[indexPath.section].bills.count > indexPath.row else { return cell }
         let bill = itemsToDisplaySeparatedByMonth[indexPath.section].bills[indexPath.row]
         detailCell.textLabel?.text = bill.title
-        detailCell.detailTextLabel?.text = "\(bill.amount < .zero ? "+ " : "")₹" + String(format: "%.2f", abs(bill.amount))
+        detailCell.detailTextLabel?.text = bill.amountDescription
         detailCell.detailTextLabel?.textColor = bill.paymentStatus == .paid ? .systemGray : .systemRed
         return detailCell
     }
