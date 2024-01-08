@@ -124,15 +124,40 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        guard currentViewType != .totalOutstandings else { return }
         guard indexPath.section < itemsToDisplaySeparatedByMonth.count, indexPath.row < itemsToDisplaySeparatedByMonth[indexPath.section].bills.count else { return }
-        let transaction = itemsToDisplaySeparatedByMonth[indexPath.section].bills[indexPath.row]
+        let creditCardBill = itemsToDisplaySeparatedByMonth[indexPath.section].bills[indexPath.row]
         if creditCardBillDetailViewController == nil {
             creditCardBillDetailViewController = NBCreditCardBillDetailViewController()
             creditCardBillDetailViewController?.delegate = self
         }
-        creditCardBillDetailViewController?.loadCreditCardBill(having: transaction.id)
+        creditCardBillDetailViewController?.loadCreditCardBill(having: creditCardBill.id)
         guard let creditCardBillDetailViewController else { return }
         present(UINavigationController(rootViewController: creditCardBillDetailViewController), animated: true)
+    }
+
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard currentViewType != .totalOutstandings else { return nil }
+        guard indexPath.section < itemsToDisplaySeparatedByMonth.count, indexPath.row < itemsToDisplaySeparatedByMonth[indexPath.section].bills.count else { return nil }
+        let creditCardBill = itemsToDisplaySeparatedByMonth[indexPath.section].bills[indexPath.row]
+        var tempBill = NBCreditCardBill.NBTempCreditCardBill(creditCardBill: creditCardBill)
+        tempBill.paymentStatus = creditCardBill.paymentStatus == .due ? .paid : .due
+        guard let billToSave = tempBill.getCreditCardBill() else { return nil }
+        let billAction = UIContextualAction(style: .normal, title: creditCardBill.paymentStatus == .due ? "Paid" : "Due", handler: { action, view, completionHandler in
+            NBCDManager.shared.saveCreditCardBill(billToSave) { result in
+                switch result {
+                case .success:
+                    DispatchQueue.main.async {
+                        self.loadCreditCardBills()
+                    }
+                case .failure(let failure):
+                    debugPrint(#function, failure)
+                }
+            }
+            completionHandler(true)
+        })
+        billAction.backgroundColor = creditCardBill.paymentStatus == .due ? .systemGreen : .systemRed
+        return UISwipeActionsConfiguration(actions: [billAction])
     }
     
     // MARK: CreditCardBillDetail Delegate
