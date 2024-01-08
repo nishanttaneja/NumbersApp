@@ -22,6 +22,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
     private var currentViewType: NBViewType = .pendingBills
     private let insetsForViewTypeSegmentedControl = UIEdgeInsets(top: 8, left: 16, bottom: 4, right: 16)
     private let insetsForTableView = UIEdgeInsets(top: 4, left: .zero, bottom: 4, right: .zero)
+    private let canEditBill: Bool = false
     
     // MARK: Views
     private var creditCardBillDetailViewController: NBCreditCardBillDetailViewController?
@@ -124,7 +125,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard currentViewType != .totalOutstandings else { return }
+        guard currentViewType != .totalOutstandings, canEditBill else { return }
         guard indexPath.section < itemsToDisplaySeparatedByMonth.count, indexPath.row < itemsToDisplaySeparatedByMonth[indexPath.section].bills.count else { return }
         let creditCardBill = itemsToDisplaySeparatedByMonth[indexPath.section].bills[indexPath.row]
         if creditCardBillDetailViewController == nil {
