@@ -11,7 +11,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
@@ -19,9 +18,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let billsViewController = NBCreditCardBillsViewController()
         billsViewController.loadViewIfNeeded()
         tabBarController.setViewControllers([
-            UINavigationController(rootViewController: NBTransactionsViewController(style: .grouped)),
+            UINavigationController(rootViewController: NBTransactionsViewController()),
             UINavigationController(rootViewController: billsViewController),
         ], animated: true)
+        tabBarController.tabBar.isTranslucent = false
+        let tabBarBackgroundColor = UIColor.systemGroupedBackground
+        tabBarController.tabBar.barTintColor = tabBarBackgroundColor
+        tabBarController.tabBar.backgroundColor = tabBarBackgroundColor
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }

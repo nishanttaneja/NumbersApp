@@ -7,13 +7,14 @@
 
 import UIKit
 
-final class NBTransactionsViewController: UITableViewController, NBTransactionDetailViewControllerDelegate {
+final class NBTransactionsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NBTransactionDetailViewControllerDelegate {
     // MARK: Properties
     private let defaultCellReuseIdentifier = "transactionDetail-NBTransactionsViewController"
     private var transactions: [NBTransaction] = []
     private var transactionsSeparatedByDate: [(dateString: String, transactions: [NBTransaction])] = []
     
     // MARK: Views
+    private let transactionsListView = UITableView(frame: .zero, style: .grouped)
     private var transactionDetailViewController: NBTransactionDetailViewController?
     private let documentPickerViewController = UIDocumentPickerViewController.init(forOpeningContentTypes: [.commaSeparatedText])
     
@@ -28,7 +29,7 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
                     self?.transactionsSeparatedByDate.append((dateString: transaction.date.formatted(date: .abbreviated, time: .omitted), transactions: [transaction]))
                 }
             }
-            self?.tableView.reloadData()
+            self?.transactionsListView.reloadData()
         }
     }
     private func loadTransactions() {
@@ -45,14 +46,27 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
     }
     
     // MARK: TableView
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    private func configTransactionsListview() {
+        transactionsListView.register(NBTransactionDetailTableViewCell.self, forCellReuseIdentifier: defaultCellReuseIdentifier)
+        transactionsListView.dataSource = self
+        transactionsListView.delegate = self
+        transactionsListView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(transactionsListView)
+        NSLayoutConstraint.activate([
+            transactionsListView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            transactionsListView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            transactionsListView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            transactionsListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+    }
+    func numberOfSections(in tableView: UITableView) -> Int {
         transactionsSeparatedByDate.count
     }
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard transactionsSeparatedByDate.count > section else { return .zero }
         return transactionsSeparatedByDate[section].transactions.count
     }
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: defaultCellReuseIdentifier, for: indexPath)
         guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return cell }
         let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
@@ -62,17 +76,17 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
         cell.detailTextLabel?.textColor = transaction.transactionType == .credit ? .systemGreen : .systemGray
         return cell
     }
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         guard transactionsSeparatedByDate.count > section else { return nil }
         return transactionsSeparatedByDate[section].dateString
     }
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         true
     }
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         .delete
     }
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
         case .delete:
             guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return }
@@ -93,7 +107,7 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
         default: break
         }
     }
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return }
         let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
@@ -116,32 +130,17 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
         super.viewDidLoad()
         title = "Transactions"
         tabBarItem = .init(title: title, image: .init(systemName: "list.clipboard"), tag: .zero)
-        tableView.register(NBTransactionDetailTableViewCell.self, forCellReuseIdentifier: defaultCellReuseIdentifier)
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.setRightBarButtonItems([
-            UIBarButtonItem(systemItem: .add, primaryAction: UIAction(handler: { _ in
-                if self.transactionDetailViewController == nil {
-                    self.transactionDetailViewController = NBTransactionDetailViewController()
-                    self.transactionDetailViewController?.delegate = self
-                } else {
-                    self.transactionDetailViewController?.addNewTransaction()
-                }
-                guard let addTransactionViewController = self.transactionDetailViewController else { return }
-                self.present(UINavigationController(rootViewController: addTransactionViewController), animated: true)
-            })),
-            UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.down"), primaryAction: UIAction(handler: { [weak self] _ in
-                guard let documentPickerViewController = self?.documentPickerViewController else { return }
-                self?.present(documentPickerViewController, animated: true)
-            }))
-        ], animated: true)
+        view.backgroundColor = transactionsListView.backgroundColor
         loadTransactions()
+        configNavigationBar()
+        configTransactionsListview()
         configDocumentPickerViewController()
     }
     
     // MARK: AddTransactionDelegate
     func addTransaction(viewController: NBTransactionDetailViewController, didAddTransaction newTransaction: NBTransaction) {
         transactions.insert(newTransaction, at: .zero)
-        tableView.insertRows(at: [IndexPath(row: .zero, section: .zero)], with: .automatic)
+        transactionsListView.insertRows(at: [IndexPath(row: .zero, section: .zero)], with: .automatic)
     }
 }
 
@@ -178,5 +177,29 @@ extension NBTransactionsViewController: UIDocumentPickerDelegate {
                 }
             }
         }
+    }
+}
+
+
+// MARK: - NavigationBar
+extension NBTransactionsViewController {
+    private func configNavigationBar() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.setRightBarButtonItems([
+            UIBarButtonItem(systemItem: .add, primaryAction: UIAction(handler: { _ in
+                if self.transactionDetailViewController == nil {
+                    self.transactionDetailViewController = NBTransactionDetailViewController()
+                    self.transactionDetailViewController?.delegate = self
+                } else {
+                    self.transactionDetailViewController?.addNewTransaction()
+                }
+                guard let addTransactionViewController = self.transactionDetailViewController else { return }
+                self.present(UINavigationController(rootViewController: addTransactionViewController), animated: true)
+            })),
+            UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.down"), primaryAction: UIAction(handler: { [weak self] _ in
+                guard let documentPickerViewController = self?.documentPickerViewController else { return }
+                self?.present(documentPickerViewController, animated: true)
+            }))
+        ], animated: true)
     }
 }
