@@ -29,12 +29,20 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
     private let documentPickerViewController = UIDocumentPickerViewController.init(forOpeningContentTypes: [.commaSeparatedText])
     private let tableView = UITableView(frame: .zero, style: .grouped)
     private let viewTypeSegmentedControl = UISegmentedControl()
+    private let totalAmountLabel: UILabel = {
+        let label = UILabel(frame: .init(x: .zero, y: .zero, width: 500, height: .zero))
+        label.textAlignment = .left
+        label.textColor = .tertiaryLabel
+        label.font = .systemFont(ofSize: 17, weight: .bold)
+        return label
+    }()
     
     // MARK: ViewTypes
     private func setViewType(_ newViewType: NBViewType) {
         DispatchQueue.main.async { [weak self] in
             guard let creditCardBills = self?.creditCardBills else { return }
             self?.itemsToDisplaySeparatedByMonth.removeAll()
+            var totalAmount: Double = .zero
             switch newViewType {
             case .allBills, .pendingBills:
                 for creditCardBill in creditCardBills {
@@ -44,6 +52,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
                     } else {
                         self?.itemsToDisplaySeparatedByMonth.append((dueDate: creditCardBill.dueDate, bills: [creditCardBill]))
                     }
+                    totalAmount += creditCardBill.amount
                 }
                 if newViewType == .pendingBills {
                     self?.itemsToDisplaySeparatedByMonth.reverse()
@@ -66,6 +75,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
                                 partialResult + nextTransaction.amount
                             }
                             let outstandingBill = NBCreditCardBill(startDate: .now, endDate: .now, dueDate: .now, title: creditCardBill.title, amount: totalOutstandingsAmount)
+                            totalAmount += totalOutstandingsAmount
                             latestBills.append(outstandingBill)
                             remainingPaymentMethodTitles.removeAll(where: { outstandingBill.title == $0 })
                             if remainingPaymentMethodTitles.isEmpty {
@@ -81,6 +91,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
                     }
                 }
             }
+            self?.totalAmountLabel.text = newViewType == .allBills ? nil : "₹" + totalAmount.formatted()
             self?.tableView.reloadData()
             self?.currentViewType = newViewType
         }
@@ -198,6 +209,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
                 self?.present(documentPickerViewController, animated: true)
             }))
         ], animated: true)
+        navigationItem.titleView = totalAmountLabel
     }
     private func configViews() {
         view.backgroundColor = tableView.backgroundColor
