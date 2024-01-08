@@ -129,7 +129,7 @@ final class NBTransactionsViewController: UITableViewController, NBTransactionDe
                 guard let addTransactionViewController = self.transactionDetailViewController else { return }
                 self.present(UINavigationController(rootViewController: addTransactionViewController), animated: true)
             })),
-            UIBarButtonItem(title: "Import", primaryAction: UIAction(handler: { [weak self] _ in
+            UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.down"), primaryAction: UIAction(handler: { [weak self] _ in
                 guard let documentPickerViewController = self?.documentPickerViewController else { return }
                 self?.present(documentPickerViewController, animated: true)
             }))

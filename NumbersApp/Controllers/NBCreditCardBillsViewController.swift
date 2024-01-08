@@ -167,7 +167,7 @@ final class NBCreditCardBillsViewController: UIViewController, UITableViewDataSo
                 guard let creditCardBillDetailViewController = self.creditCardBillDetailViewController else { return }
                 self.present(UINavigationController(rootViewController: creditCardBillDetailViewController), animated: true)
             })),
-            UIBarButtonItem(title: "Import", primaryAction: UIAction(handler: { [weak self] _ in
+            UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.down"), primaryAction: UIAction(handler: { [weak self] _ in
                 guard let documentPickerViewController = self?.documentPickerViewController else { return }
                 self?.present(documentPickerViewController, animated: true)
             }))
