@@ -235,9 +235,9 @@ extension NBCDManager {
                     case 1:
                         tempTransaction.paymentMethod = .init(title: component)
                     case 2:
-                        tempTransaction.expenseType = .init(rawValue: component.lowercased())
-                    case 3:
                         tempTransaction.category = .init(rawValue: component.lowercased())
+                    case 3:
+                        tempTransaction.expenseType = .init(rawValue: "friends"/*component.lowercased()*/)
                     default:
                         titleComponents.insert(component, at: .zero)
                     }
