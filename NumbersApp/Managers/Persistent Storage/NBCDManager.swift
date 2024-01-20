@@ -322,40 +322,38 @@ extension NBCDManager {
         }
     }
     private func saveCreditCardBills(_ newCreditCardBills: [NBCreditCardBill], completionHandler: @escaping (_ result: Result<Bool, Error>) -> Void) {
-        persistentContainer.performBackgroundTask { context in
+        persistentContainer.performBackgroundTask { [weak self] context in
             context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-            do {
-                for newCreditCardBill in newCreditCardBills {
-                    // Creating Transaction
-                    let creditCardBill = NBCDCreditCardBill(context: context)
-                    creditCardBill.creditCardBillID = newCreditCardBill.id
-                    creditCardBill.startDate = newCreditCardBill.startDate
-                    creditCardBill.endDate = newCreditCardBill.endDate
-                    creditCardBill.dueDate = newCreditCardBill.dueDate
-                    creditCardBill.title = newCreditCardBill.title
-                    creditCardBill.paymentStatus = newCreditCardBill.paymentStatus.rawValue
-                    creditCardBill.amount = newCreditCardBill.amount
-                    // Fetching Payment Method
-                    let request = NBCDTransactionPaymentMethod.fetchRequest()
-                    request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), newCreditCardBill.title)
-                    let paymentMethods = try context.fetch(request)
-                    if paymentMethods.isEmpty {
-                        // Creating new Payment Method
-                        let paymentMethod = NBCDTransactionPaymentMethod(context: context)
-                        paymentMethod.paymentMethodID = UUID()
-                        paymentMethod.title = newCreditCardBill.title
-                    }
-                }
-                if context.hasChanges {
-                    try context.save()
-                    completionHandler(.success(true))
-                } else {
-                    completionHandler(.success(false))
-                }
-            } catch let error {
-                debugPrint(#function, error)
-                completionHandler(.failure(error))
+            var paymentMethodsTitleToCreate: [String] = []
+            for newCreditCardBill in newCreditCardBills {
+                let creditCardBill = NBCDCreditCardBill(context: context)
+                creditCardBill.creditCardBillID = newCreditCardBill.id
+                creditCardBill.startDate = newCreditCardBill.startDate
+                creditCardBill.endDate = newCreditCardBill.endDate
+                creditCardBill.dueDate = newCreditCardBill.dueDate
+                creditCardBill.title = newCreditCardBill.title
+                creditCardBill.paymentStatus = newCreditCardBill.paymentStatus.rawValue
+                creditCardBill.amount = newCreditCardBill.amount
+                paymentMethodsTitleToCreate.append(newCreditCardBill.title)
             }
+            self?.createNewObject(with: paymentMethodsTitleToCreate, in: context, ofType: NBCDTransactionPaymentMethod.self, forKey: "title", idKeyName: "paymentMethodID", completionHandler: { result in
+                do {
+                    switch result {
+                    case .success(let success):
+                        if context.hasChanges {
+                            try context.save()
+                            completionHandler(.success(success))
+                        } else {
+                            completionHandler(.success(false))
+                        }
+                    case .failure(let failure):
+                        throw failure
+                    }
+                } catch let error {
+                    debugPrint(#function, error)
+                    completionHandler(.failure(error))
+                }
+            })
         }
     }
     func loadAllCreditCardBills(completionHandler: @escaping (_ result: Result<[NBCreditCardBill], Error>) -> Void) {
@@ -464,6 +462,29 @@ extension NBCDManager {
             }
             saveCreditCardBills(creditCardBillsToSave, completionHandler: completionHandler)
         } catch let error {
+            completionHandler(.failure(error))
+        }
+    }
+}
+
+
+// MARK: - Generics
+extension NBCDManager {
+    private func createNewObject<T: NSManagedObject>(with titles: [String], in context: NSManagedObjectContext, ofType managedObject: T.Type, forKey keyName: String, idKeyName: String, completionHandler: (_ result: Result<Bool, Error>) -> Void) {
+        do {
+            let request = managedObject.fetchRequest()
+            request.predicate = NSPredicate(format: "\(keyName) in %@", titles)
+            let savedObjects = try context.fetch(request) as? [T] ?? []
+            let newObjects: [T] = titles.compactMap { title in
+                guard !savedObjects.contains(where: { $0.value(forKey: keyName) as? String == title }) else { return nil }
+                let newObject = managedObject.init(context: context)
+                newObject.setValue(UUID(), forKey: idKeyName)
+                newObject.setValue(title, forKey: keyName)
+                return newObject
+            }
+            completionHandler(.success(!newObjects.isEmpty))
+        } catch let error {
+            debugPrint(self, #function, error)
             completionHandler(.failure(error))
         }
     }
