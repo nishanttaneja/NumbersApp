@@ -12,6 +12,19 @@
 		B40602F72B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40602F62B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift */; };
 		B40EFD802B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40EFD7F2B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift */; };
 		B40EFD822B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = B40EFD812B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel */; };
+		B47D65DA2B7BEF3300DE3331 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B47D65D92B7BEF3300DE3331 /* WidgetKit.framework */; };
+		B47D65DC2B7BEF3300DE3331 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B47D65DB2B7BEF3300DE3331 /* SwiftUI.framework */; };
+		B47D65DF2B7BEF3300DE3331 /* PendingDuesWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47D65DE2B7BEF3300DE3331 /* PendingDuesWidgetBundle.swift */; };
+		B47D65E12B7BEF3300DE3331 /* PendingDuesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47D65E02B7BEF3300DE3331 /* PendingDuesWidget.swift */; };
+		B47D65E32B7BEF3300DE3331 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47D65E22B7BEF3300DE3331 /* AppIntent.swift */; };
+		B47D65E52B7BEF3400DE3331 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B47D65E42B7BEF3400DE3331 /* Assets.xcassets */; };
+		B47D65E92B7BEF3400DE3331 /* PendingDuesWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B47D65D72B7BEF3300DE3331 /* PendingDuesWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B47D65EE2B7BF6D200DE3331 /* NBCDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37EC12B3F2F6D00731635 /* NBCDManager.swift */; };
+		B47D65F02B7BF73B00DE3331 /* NBTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C742B3DECA7006EDFBE /* NBTransaction.swift */; };
+		B47D65F12B7BF75A00DE3331 /* NBCreditCardBill.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48301312B419D7300F1F9FF /* NBCreditCardBill.swift */; };
+		B47D65F22B7BF80700DE3331 /* NBDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B4C37EBB2B3F2DB500731635 /* NBDB.xcdatamodeld */; };
+		B47D65F32B7BF81A00DE3331 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37ECB2B3F543D00731635 /* Date+Extension.swift */; };
+		B47D65F42B7BF82200DE3331 /* NBDateTimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483012F2B418F6700F1F9FF /* NBDateTimeManager.swift */; };
 		B48301302B418F6700F1F9FF /* NBDateTimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483012F2B418F6700F1F9FF /* NBDateTimeManager.swift */; };
 		B48301322B419D7300F1F9FF /* NBCreditCardBill.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48301312B419D7300F1F9FF /* NBCreditCardBill.swift */; };
 		B48301342B419DF800F1F9FF /* NBCreditCardBillsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48301332B419DF800F1F9FF /* NBCreditCardBillsViewController.swift */; };
@@ -34,6 +47,30 @@
 		B4C37ECC2B3F543D00731635 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37ECB2B3F543D00731635 /* Date+Extension.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B47D65E72B7BEF3400DE3331 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B4AB3C542B3DEC0E006EDFBE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B47D65D62B7BEF3300DE3331;
+			remoteInfo = PendingDuesWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B47D65EA2B7BEF3400DE3331 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B47D65E92B7BEF3400DE3331 /* PendingDuesWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		B404628E2B3FE6E2009D669C /* NBDB v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NBDB v2.xcdatamodel"; sourceTree = "<group>"; };
 		B40462902B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCDTransactionTypeMigrationPolicy.swift; sourceTree = "<group>"; };
@@ -42,6 +79,16 @@
 		B40EFD7E2B407EEA0058A447 /* NBDB v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NBDB v3.xcdatamodel"; sourceTree = "<group>"; };
 		B40EFD7F2B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCDTransactionPaymentMethodMigrationPolicy.swift; sourceTree = "<group>"; };
 		B40EFD812B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = NBCDTransactionPaymentMethodMappingModel.xcmappingmodel; sourceTree = "<group>"; };
+		B47D65D72B7BEF3300DE3331 /* PendingDuesWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PendingDuesWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B47D65D92B7BEF3300DE3331 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		B47D65DB2B7BEF3300DE3331 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		B47D65DE2B7BEF3300DE3331 /* PendingDuesWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingDuesWidgetBundle.swift; sourceTree = "<group>"; };
+		B47D65E02B7BEF3300DE3331 /* PendingDuesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingDuesWidget.swift; sourceTree = "<group>"; };
+		B47D65E22B7BEF3300DE3331 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
+		B47D65E42B7BEF3400DE3331 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B47D65E62B7BEF3400DE3331 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B47D65F52B7BFE4900DE3331 /* PendingDuesWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PendingDuesWidgetExtension.entitlements; sourceTree = "<group>"; };
+		B47D65F62B7C00F500DE3331 /* NumbersApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NumbersApp.entitlements; sourceTree = "<group>"; };
 		B483012F2B418F6700F1F9FF /* NBDateTimeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBDateTimeManager.swift; sourceTree = "<group>"; };
 		B48301312B419D7300F1F9FF /* NBCreditCardBill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCreditCardBill.swift; sourceTree = "<group>"; };
 		B48301332B419DF800F1F9FF /* NBCreditCardBillsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCreditCardBillsViewController.swift; sourceTree = "<group>"; };
@@ -68,6 +115,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B47D65D42B7BEF3300DE3331 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B47D65DC2B7BEF3300DE3331 /* SwiftUI.framework in Frameworks */,
+				B47D65DA2B7BEF3300DE3331 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B4AB3C592B3DEC0E006EDFBE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -90,10 +146,34 @@
 			path = "Persistent Storage";
 			sourceTree = "<group>";
 		};
+		B47D65D82B7BEF3300DE3331 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B47D65D92B7BEF3300DE3331 /* WidgetKit.framework */,
+				B47D65DB2B7BEF3300DE3331 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B47D65DD2B7BEF3300DE3331 /* PendingDuesWidget */ = {
+			isa = PBXGroup;
+			children = (
+				B47D65DE2B7BEF3300DE3331 /* PendingDuesWidgetBundle.swift */,
+				B47D65E02B7BEF3300DE3331 /* PendingDuesWidget.swift */,
+				B47D65E22B7BEF3300DE3331 /* AppIntent.swift */,
+				B47D65E42B7BEF3400DE3331 /* Assets.xcassets */,
+				B47D65E62B7BEF3400DE3331 /* Info.plist */,
+			);
+			path = PendingDuesWidget;
+			sourceTree = "<group>";
+		};
 		B4AB3C532B3DEC0E006EDFBE = {
 			isa = PBXGroup;
 			children = (
+				B47D65F52B7BFE4900DE3331 /* PendingDuesWidgetExtension.entitlements */,
 				B4AB3C5E2B3DEC0E006EDFBE /* NumbersApp */,
+				B47D65DD2B7BEF3300DE3331 /* PendingDuesWidget */,
+				B47D65D82B7BEF3300DE3331 /* Frameworks */,
 				B4AB3C5D2B3DEC0E006EDFBE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -102,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				B4AB3C5C2B3DEC0E006EDFBE /* NumbersApp.app */,
+				B47D65D72B7BEF3300DE3331 /* PendingDuesWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,6 +190,7 @@
 		B4AB3C5E2B3DEC0E006EDFBE /* NumbersApp */ = {
 			isa = PBXGroup;
 			children = (
+				B47D65F62B7C00F500DE3331 /* NumbersApp.entitlements */,
 				B4AB3C5F2B3DEC0E006EDFBE /* AppDelegate.swift */,
 				B4AB3C612B3DEC0E006EDFBE /* SceneDelegate.swift */,
 				B4AB3C732B3DEC84006EDFBE /* Models */,
@@ -178,6 +260,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		B47D65D62B7BEF3300DE3331 /* PendingDuesWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B47D65ED2B7BEF3400DE3331 /* Build configuration list for PBXNativeTarget "PendingDuesWidgetExtension" */;
+			buildPhases = (
+				B47D65D32B7BEF3300DE3331 /* Sources */,
+				B47D65D42B7BEF3300DE3331 /* Frameworks */,
+				B47D65D52B7BEF3300DE3331 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PendingDuesWidgetExtension;
+			productName = PendingDuesWidgetExtension;
+			productReference = B47D65D72B7BEF3300DE3331 /* PendingDuesWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		B4AB3C5B2B3DEC0E006EDFBE /* NumbersApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B4AB3C702B3DEC10006EDFBE /* Build configuration list for PBXNativeTarget "NumbersApp" */;
@@ -185,10 +284,12 @@
 				B4AB3C582B3DEC0E006EDFBE /* Sources */,
 				B4AB3C592B3DEC0E006EDFBE /* Frameworks */,
 				B4AB3C5A2B3DEC0E006EDFBE /* Resources */,
+				B47D65EA2B7BEF3400DE3331 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B47D65E82B7BEF3400DE3331 /* PBXTargetDependency */,
 			);
 			name = NumbersApp;
 			productName = NumbersApp;
@@ -202,9 +303,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1510;
+				LastSwiftUpdateCheck = 1520;
 				LastUpgradeCheck = 1510;
 				TargetAttributes = {
+					B47D65D62B7BEF3300DE3331 = {
+						CreatedOnToolsVersion = 15.2;
+					};
 					B4AB3C5B2B3DEC0E006EDFBE = {
 						CreatedOnToolsVersion = 15.1;
 					};
@@ -224,11 +328,20 @@
 			projectRoot = "";
 			targets = (
 				B4AB3C5B2B3DEC0E006EDFBE /* NumbersApp */,
+				B47D65D62B7BEF3300DE3331 /* PendingDuesWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B47D65D52B7BEF3300DE3331 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B47D65E52B7BEF3400DE3331 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B4AB3C5A2B3DEC0E006EDFBE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -241,6 +354,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B47D65D32B7BEF3300DE3331 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B47D65F42B7BF82200DE3331 /* NBDateTimeManager.swift in Sources */,
+				B47D65E12B7BEF3300DE3331 /* PendingDuesWidget.swift in Sources */,
+				B47D65F12B7BF75A00DE3331 /* NBCreditCardBill.swift in Sources */,
+				B47D65DF2B7BEF3300DE3331 /* PendingDuesWidgetBundle.swift in Sources */,
+				B47D65F22B7BF80700DE3331 /* NBDB.xcdatamodeld in Sources */,
+				B47D65EE2B7BF6D200DE3331 /* NBCDManager.swift in Sources */,
+				B47D65F32B7BF81A00DE3331 /* Date+Extension.swift in Sources */,
+				B47D65F02B7BF73B00DE3331 /* NBTransaction.swift in Sources */,
+				B47D65E32B7BEF3300DE3331 /* AppIntent.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B4AB3C582B3DEC0E006EDFBE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -273,6 +402,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		B47D65E82B7BEF3400DE3331 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B47D65D62B7BEF3300DE3331 /* PendingDuesWidgetExtension */;
+			targetProxy = B47D65E72B7BEF3400DE3331 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		B4AB3C6A2B3DEC10006EDFBE /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -285,6 +422,62 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		B47D65EB2B7BEF3400DE3331 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = PendingDuesWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4YZDJM5F99;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PendingDuesWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PendingDuesWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unkn0wny3t.ios.NumbersApp.PendingDuesWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B47D65EC2B7BEF3400DE3331 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = PendingDuesWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4YZDJM5F99;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PendingDuesWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PendingDuesWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unkn0wny3t.ios.NumbersApp.PendingDuesWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		B4AB3C6E2B3DEC10006EDFBE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -407,10 +600,12 @@
 		B4AB3C712B3DEC10006EDFBE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NumbersApp/NumbersApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = 4YZDJM5F99;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NumbersApp/Info.plist;
@@ -436,10 +631,12 @@
 		B4AB3C722B3DEC10006EDFBE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NumbersApp/NumbersApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = 4YZDJM5F99;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NumbersApp/Info.plist;
@@ -465,6 +662,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B47D65ED2B7BEF3400DE3331 /* Build configuration list for PBXNativeTarget "PendingDuesWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B47D65EB2B7BEF3400DE3331 /* Debug */,
+				B47D65EC2B7BEF3400DE3331 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B4AB3C572B3DEC0E006EDFBE /* Build configuration list for PBXProject "NumbersApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
