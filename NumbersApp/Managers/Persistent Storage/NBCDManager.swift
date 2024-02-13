@@ -16,20 +16,34 @@ final class NBCDManager {
         case noDataFound, noPermission
     }
     
-    private lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "NBDB")
-        container.loadPersistentStores { storeDescription, error in
+    private(set) lazy var persistentContainer: NSPersistentContainer = {
+        let persistentContainer = NSPersistentContainer(name: "NBDB")
+        let storeURL = URL.storeURL(for: "group.numbersapp.localdatabase", databaseName: "NBDB")
+        let storeDescription = NSPersistentStoreDescription(url: storeURL)
+        storeDescription.shouldMigrateStoreAutomatically = false
+        storeDescription.shouldInferMappingModelAutomatically = true
+        persistentContainer.persistentStoreDescriptions = [storeDescription]
+        
+//        let container = NSPersistentContainer(name: "NBDB")
+        persistentContainer.loadPersistentStores { storeDescription, error in
             if let error {
                 fatalError("Unresolved error \(error), \(error.localizedDescription)")
-            } else {
-                let description = NSPersistentStoreDescription()
-                description.shouldMigrateStoreAutomatically = false
-                description.shouldInferMappingModelAutomatically = true
-                container.persistentStoreDescriptions = [description]
             }
         }
-        return container
+        return persistentContainer
     }()
+}
+
+public extension URL {
+
+    /// Returns a URL for the given app group and database pointing to the sqlite database.
+    static func storeURL(for appGroup: String, databaseName: String) -> URL {
+        guard let fileContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
+            fatalError("Shared file container could not be created.")
+        }
+
+        return fileContainer.appendingPathComponent("\(databaseName).sqlite")
+    }
 }
 
 
@@ -257,30 +271,42 @@ extension NBCDManager {
 
 // MARK: - PaymentMethod
 extension NBCDManager {
+    @available(*, renamed: "loadAllPaymentMethods()")
     func loadAllPaymentMethods(completionHandler: @escaping (_ result: Result<[NBTransaction.NBTransactionPaymentMethod], Error>) -> Void) {
-        do {
-            let request = NBCDTransactionPaymentMethod.fetchRequest()
-            request.sortDescriptors = [NSSortDescriptor(key: #keyPath(NBCDTransactionPaymentMethod.title), ascending: true)]
-            let savedPaymentMethods = try persistentContainer.viewContext.fetch(request)
-            let paymentMethodsToDisplay: [NBTransaction.NBTransactionPaymentMethod] = savedPaymentMethods.compactMap { savedPaymentMethod in
-                guard let id = savedPaymentMethod.paymentMethodID,
-                      let title = savedPaymentMethod.title,
-                      let transactions: [NBTransaction] = (savedPaymentMethod.transactions?.allObjects as? [NBCDTransaction])?.compactMap({ savedTransaction in
-                          guard let transactionId = savedTransaction.transactionID,
-                                let date = savedTransaction.date,
-                                let title = savedTransaction.title,
-                                let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
-                                let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
-                                let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue) else  { return nil }
-                          return NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: .init(id: id, title: title, transactions: []), amount: savedTransaction.amount)
-                      }) else { return nil }
-                return NBTransaction.NBTransactionPaymentMethod(id: id, title: title, transactions: transactions)
+        persistentContainer.viewContext.perform {
+            do {
+                let request = NBCDTransactionPaymentMethod.fetchRequest()
+                request.sortDescriptors = [NSSortDescriptor(key: #keyPath(NBCDTransactionPaymentMethod.title), ascending: true)]
+                let savedPaymentMethods = try self.persistentContainer.viewContext.fetch(request)
+                let paymentMethodsToDisplay: [NBTransaction.NBTransactionPaymentMethod] = savedPaymentMethods.compactMap { savedPaymentMethod in
+                    guard let id = savedPaymentMethod.paymentMethodID,
+                          let title = savedPaymentMethod.title,
+                          let transactions: [NBTransaction] = (savedPaymentMethod.transactions?.allObjects as? [NBCDTransaction])?.compactMap({ savedTransaction in
+                              guard let transactionId = savedTransaction.transactionID,
+                                    let date = savedTransaction.date,
+                                    let title = savedTransaction.title,
+                                    let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
+                                    let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
+                                    let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue) else  { return nil }
+                              return NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: .init(id: id, title: title, transactions: []), amount: savedTransaction.amount)
+                          }) else { return nil }
+                    return NBTransaction.NBTransactionPaymentMethod(id: id, title: title, transactions: transactions)
+                }
+                completionHandler(.success(paymentMethodsToDisplay))
+            } catch let error {
+                completionHandler(.failure(error))
             }
-            completionHandler(.success(paymentMethodsToDisplay))
-        } catch let error {
-            completionHandler(.failure(error))
         }
     }
+    
+    func loadAllPaymentMethods() async throws -> [NBTransaction.NBTransactionPaymentMethod] {
+        return try await withCheckedThrowingContinuation { continuation in
+            loadAllPaymentMethods() { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
 }
 
 
