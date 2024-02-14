@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import WidgetKit
 
 // MARK: - NBCDManager
 final class NBCDManager {
@@ -102,6 +103,7 @@ extension NBCDManager {
                 } else {
                     completionHandler(.success(false))
                 }
+                WidgetCenter.shared.reloadAllTimelines()
             } catch let error {
                 debugPrint(#function, error)
                 completionHandler(.failure(error))
@@ -163,6 +165,7 @@ extension NBCDManager {
                 } else {
                     completionHandler(.success(false))
                 }
+                WidgetCenter.shared.reloadAllTimelines()
             } catch let error {
                 debugPrint(#function, error)
                 completionHandler(.failure(error))
@@ -198,6 +201,55 @@ extension NBCDManager {
         } catch let error {
             debugPrint(#function, error)
             completionHandler(.failure(error))
+        }
+    }
+    @available(*, renamed: "loadAllTransactions(afterDateTime:)")
+    func loadAllTransactions(afterDateTime: Date, completionHandler: @escaping (_ result: Result<[NBTransaction], Error>) -> Void) {
+        Task {
+            do {
+                let result = try await loadAllTransactions(afterDateTime: afterDateTime)
+                completionHandler(.success(result))
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    
+    
+    func loadAllTransactions(afterDateTime: Date) async throws -> [NBTransaction] {
+        return try await withCheckedThrowingContinuation { continuation in
+            persistentContainer.viewContext.perform {
+                do {
+                    let request = NBCDTransaction.fetchRequest()
+                    request.sortDescriptors = [NSSortDescriptor(key: #keyPath(NBCDTransaction.date), ascending: false)]
+                    request.predicate = NSPredicate(format: "%K > %@", #keyPath(NBCDTransaction.date), afterDateTime as CVarArg)
+                    let savedTransactions = try self.persistentContainer.viewContext.fetch(request)
+                    let transactionsToDisplay: [NBTransaction] = savedTransactions.compactMap { savedTransaction in
+                        guard let transactionId = savedTransaction.transactionID,
+                              let date = savedTransaction.date,
+                              let title = savedTransaction.title,
+                              let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
+                              let subCategoryRawValue = savedTransaction.subCategory, let subCategory = NBTransaction.NBTransactionSubCategory(rawValue: subCategoryRawValue) else { return nil }
+                        let debitAccount: NBTransaction.NBTransactionPaymentMethod?
+                        if let debitAccountId = savedTransaction.debitAccount?.paymentMethodID, let debitAccountTitle = savedTransaction.debitAccount?.title {
+                            debitAccount = NBTransaction.NBTransactionPaymentMethod(id: debitAccountId, title: debitAccountTitle)
+                        } else {
+                            debitAccount = nil
+                        }
+                        let creditAccount: NBTransaction.NBTransactionPaymentMethod?
+                        if let creditAccountId = savedTransaction.creditAccount?.paymentMethodID, let creditAccountTitle = savedTransaction.creditAccount?.title {
+                            creditAccount = NBTransaction.NBTransactionPaymentMethod(id: creditAccountId, title: creditAccountTitle)
+                        } else {
+                            creditAccount = nil
+                        }
+                        return NBTransaction(id: transactionId, date: date, title: title, description: savedTransaction.transactionDescription ?? "", category: category, subCategory: subCategory, debitAccount: debitAccount, creditAccount: creditAccount, amount: savedTransaction.amount)
+                    }
+                    continuation.resume(with: .success(transactionsToDisplay))
+                } catch let error {
+                    debugPrint(#function, error)
+                    continuation.resume(with: .failure(error))
+                }
+            }
         }
     }
     func loadTransaction(having id: UUID, completionHandler: @escaping (_ result: Result<NBTransaction, Error>) -> Void) {
@@ -287,6 +339,7 @@ extension NBCDManager {
                 } else {
                     completionHandler(.success(false))
                 }
+                WidgetCenter.shared.reloadAllTimelines()
             } catch let error {
                 debugPrint(#function, error)
                 completionHandler(.failure(error))

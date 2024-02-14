@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B40285132B7D3D390054341C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B47D65D92B7BEF3300DE3331 /* WidgetKit.framework */; };
+		B40285142B7D3D390054341C /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B47D65DB2B7BEF3300DE3331 /* SwiftUI.framework */; };
+		B40285172B7D3D390054341C /* CategorySummaryWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40285162B7D3D390054341C /* CategorySummaryWidgetBundle.swift */; };
+		B40285192B7D3D390054341C /* CategorySummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40285182B7D3D390054341C /* CategorySummaryWidget.swift */; };
+		B402851B2B7D3D390054341C /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B402851A2B7D3D390054341C /* AppIntent.swift */; };
+		B402851D2B7D3D3B0054341C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B402851C2B7D3D3B0054341C /* Assets.xcassets */; };
+		B40285212B7D3D3B0054341C /* CategorySummaryWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B40285122B7D3D390054341C /* CategorySummaryWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B40285252B7D40CD0054341C /* NBCDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37EC12B3F2F6D00731635 /* NBCDManager.swift */; };
+		B40285262B7D40D50054341C /* NBTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AB3C742B3DECA7006EDFBE /* NBTransaction.swift */; };
+		B40285272B7D40DD0054341C /* NBCreditCardBill.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48301312B419D7300F1F9FF /* NBCreditCardBill.swift */; };
+		B40285282B7D40EB0054341C /* NBDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B4C37EBB2B3F2DB500731635 /* NBDB.xcdatamodeld */; };
+		B40285292B7D40F50054341C /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C37ECB2B3F543D00731635 /* Date+Extension.swift */; };
+		B402852A2B7D40F80054341C /* NBDateTimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483012F2B418F6700F1F9FF /* NBDateTimeManager.swift */; };
 		B40602F72B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40602F62B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift */; };
 		B47D65DA2B7BEF3300DE3331 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B47D65D92B7BEF3300DE3331 /* WidgetKit.framework */; };
 		B47D65DC2B7BEF3300DE3331 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B47D65DB2B7BEF3300DE3331 /* SwiftUI.framework */; };
@@ -44,6 +57,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B402851F2B7D3D3B0054341C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B4AB3C542B3DEC0E006EDFBE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B40285112B7D3D390054341C;
+			remoteInfo = CategorySummaryWidgetExtension;
+		};
 		B47D65E72B7BEF3400DE3331 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B4AB3C542B3DEC0E006EDFBE /* Project object */;
@@ -61,6 +81,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B47D65E92B7BEF3400DE3331 /* PendingDuesWidgetExtension.appex in Embed Foundation Extensions */,
+				B40285212B7D3D3B0054341C /* CategorySummaryWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -68,6 +89,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B40285122B7D3D390054341C /* CategorySummaryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CategorySummaryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B40285162B7D3D390054341C /* CategorySummaryWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySummaryWidgetBundle.swift; sourceTree = "<group>"; };
+		B40285182B7D3D390054341C /* CategorySummaryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySummaryWidget.swift; sourceTree = "<group>"; };
+		B402851A2B7D3D390054341C /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
+		B402851C2B7D3D3B0054341C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B402851E2B7D3D3B0054341C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B402852B2B7D42EC0054341C /* CategorySummaryWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CategorySummaryWidgetExtension.entitlements; sourceTree = "<group>"; };
 		B404628E2B3FE6E2009D669C /* NBDB v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NBDB v2.xcdatamodel"; sourceTree = "<group>"; };
 		B40602F62B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBPaymentMethodsViewController.swift; sourceTree = "<group>"; };
 		B40EFD7E2B407EEA0058A447 /* NBDB v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NBDB v3.xcdatamodel"; sourceTree = "<group>"; };
@@ -107,6 +135,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B402850F2B7D3D390054341C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B40285142B7D3D390054341C /* SwiftUI.framework in Frameworks */,
+				B40285132B7D3D390054341C /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B47D65D42B7BEF3300DE3331 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -126,6 +163,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B40285152B7D3D390054341C /* CategorySummaryWidget */ = {
+			isa = PBXGroup;
+			children = (
+				B40285162B7D3D390054341C /* CategorySummaryWidgetBundle.swift */,
+				B40285182B7D3D390054341C /* CategorySummaryWidget.swift */,
+				B402851A2B7D3D390054341C /* AppIntent.swift */,
+				B402851C2B7D3D3B0054341C /* Assets.xcassets */,
+				B402851E2B7D3D3B0054341C /* Info.plist */,
+			);
+			path = CategorySummaryWidget;
+			sourceTree = "<group>";
+		};
 		B404628F2B3FE754009D669C /* Persistent Storage */ = {
 			isa = PBXGroup;
 			children = (
@@ -158,9 +207,11 @@
 		B4AB3C532B3DEC0E006EDFBE = {
 			isa = PBXGroup;
 			children = (
+				B402852B2B7D42EC0054341C /* CategorySummaryWidgetExtension.entitlements */,
 				B47D65F52B7BFE4900DE3331 /* PendingDuesWidgetExtension.entitlements */,
 				B4AB3C5E2B3DEC0E006EDFBE /* NumbersApp */,
 				B47D65DD2B7BEF3300DE3331 /* PendingDuesWidget */,
+				B40285152B7D3D390054341C /* CategorySummaryWidget */,
 				B47D65D82B7BEF3300DE3331 /* Frameworks */,
 				B4AB3C5D2B3DEC0E006EDFBE /* Products */,
 			);
@@ -171,6 +222,7 @@
 			children = (
 				B4AB3C5C2B3DEC0E006EDFBE /* NumbersApp.app */,
 				B47D65D72B7BEF3300DE3331 /* PendingDuesWidgetExtension.appex */,
+				B40285122B7D3D390054341C /* CategorySummaryWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -248,6 +300,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		B40285112B7D3D390054341C /* CategorySummaryWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B40285222B7D3D3B0054341C /* Build configuration list for PBXNativeTarget "CategorySummaryWidgetExtension" */;
+			buildPhases = (
+				B402850E2B7D3D390054341C /* Sources */,
+				B402850F2B7D3D390054341C /* Frameworks */,
+				B40285102B7D3D390054341C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CategorySummaryWidgetExtension;
+			productName = CategorySummaryWidgetExtension;
+			productReference = B40285122B7D3D390054341C /* CategorySummaryWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		B47D65D62B7BEF3300DE3331 /* PendingDuesWidgetExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B47D65ED2B7BEF3400DE3331 /* Build configuration list for PBXNativeTarget "PendingDuesWidgetExtension" */;
@@ -278,6 +347,7 @@
 			);
 			dependencies = (
 				B47D65E82B7BEF3400DE3331 /* PBXTargetDependency */,
+				B40285202B7D3D3B0054341C /* PBXTargetDependency */,
 			);
 			name = NumbersApp;
 			productName = NumbersApp;
@@ -294,6 +364,9 @@
 				LastSwiftUpdateCheck = 1520;
 				LastUpgradeCheck = 1510;
 				TargetAttributes = {
+					B40285112B7D3D390054341C = {
+						CreatedOnToolsVersion = 15.2;
+					};
 					B47D65D62B7BEF3300DE3331 = {
 						CreatedOnToolsVersion = 15.2;
 					};
@@ -317,11 +390,20 @@
 			targets = (
 				B4AB3C5B2B3DEC0E006EDFBE /* NumbersApp */,
 				B47D65D62B7BEF3300DE3331 /* PendingDuesWidgetExtension */,
+				B40285112B7D3D390054341C /* CategorySummaryWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B40285102B7D3D390054341C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B402851D2B7D3D3B0054341C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B47D65D52B7BEF3300DE3331 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -342,6 +424,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B402850E2B7D3D390054341C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B402852A2B7D40F80054341C /* NBDateTimeManager.swift in Sources */,
+				B40285262B7D40D50054341C /* NBTransaction.swift in Sources */,
+				B40285272B7D40DD0054341C /* NBCreditCardBill.swift in Sources */,
+				B40285192B7D3D390054341C /* CategorySummaryWidget.swift in Sources */,
+				B40285282B7D40EB0054341C /* NBDB.xcdatamodeld in Sources */,
+				B40285172B7D3D390054341C /* CategorySummaryWidgetBundle.swift in Sources */,
+				B40285292B7D40F50054341C /* Date+Extension.swift in Sources */,
+				B40285252B7D40CD0054341C /* NBCDManager.swift in Sources */,
+				B402851B2B7D3D390054341C /* AppIntent.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B47D65D32B7BEF3300DE3331 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -387,6 +485,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B40285202B7D3D3B0054341C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B40285112B7D3D390054341C /* CategorySummaryWidgetExtension */;
+			targetProxy = B402851F2B7D3D3B0054341C /* PBXContainerItemProxy */;
+		};
 		B47D65E82B7BEF3400DE3331 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B47D65D62B7BEF3300DE3331 /* PendingDuesWidgetExtension */;
@@ -406,6 +509,62 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		B40285232B7D3D3B0054341C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = CategorySummaryWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4YZDJM5F99;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CategorySummaryWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CategorySummaryWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unkn0wny3t.ios.NumbersApp.CategorySummaryWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B40285242B7D3D3B0054341C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = CategorySummaryWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4YZDJM5F99;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CategorySummaryWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CategorySummaryWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unkn0wny3t.ios.NumbersApp.CategorySummaryWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		B47D65EB2B7BEF3400DE3331 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -646,6 +805,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B40285222B7D3D3B0054341C /* Build configuration list for PBXNativeTarget "CategorySummaryWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B40285232B7D3D3B0054341C /* Debug */,
+				B40285242B7D3D3B0054341C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B47D65ED2B7BEF3400DE3331 /* Build configuration list for PBXNativeTarget "PendingDuesWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
