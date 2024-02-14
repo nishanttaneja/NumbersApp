@@ -18,11 +18,12 @@
         <attribute name="amount" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="category" attributeType="String"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="expenseType" attributeType="String"/>
+        <attribute name="subCategory" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
+        <attribute name="transactionDescription" optional="YES" attributeType="String"/>
         <attribute name="transactionID" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="transactionType" attributeType="String"/>
-        <relationship name="paymentMethod" maxCount="1" deletionRule="Nullify" destinationEntity="NBCDTransactionPaymentMethod" inverseName="transactions" inverseEntity="NBCDTransactionPaymentMethod"/>
+        <relationship name="creditAccount" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NBCDTransactionPaymentMethod" inverseName="creditTransactions" inverseEntity="NBCDTransactionPaymentMethod"/>
+        <relationship name="debitAccount" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NBCDTransactionPaymentMethod" inverseName="debitTransactions" inverseEntity="NBCDTransactionPaymentMethod"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="transactionID"/>
@@ -32,6 +33,7 @@
     <entity name="NBCDTransactionPaymentMethod" representedClassName="NBCDTransactionPaymentMethod" syncable="YES" codeGenerationType="class">
         <attribute name="paymentMethodID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
-        <relationship name="transactions" toMany="YES" deletionRule="Nullify" destinationEntity="NBCDTransaction" inverseName="paymentMethod" inverseEntity="NBCDTransaction"/>
+        <relationship name="creditTransactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="NBCDTransaction" inverseName="creditAccount" inverseEntity="NBCDTransaction"/>
+        <relationship name="debitTransactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="NBCDTransaction" inverseName="debitAccount" inverseEntity="NBCDTransaction"/>
     </entity>
 </model>

@@ -1,8 +1,8 @@
 //
-//  NBTransaction.swift
+//  NBTransaction2.swift
 //  NumbersApp
 //
-//  Created by Nishant Taneja on 28/12/23.
+//  Created by Nishant Taneja on 14/02/24.
 //
 
 import Foundation
@@ -11,18 +11,24 @@ import Foundation
 struct NBTransaction {
     // MARK: Category
     enum NBTransactionCategory: String, CaseIterable {
-        case bike, car, clothing, education, entertainment
-        case foodAndDrinks = "food & drinks"
-        case gifts
-        case healthAndFitness = "health & fitness"
-        case metro, others, rickshaw, scooty
-        case selfCare = "self care"
-        case utilities
+        case billPayment = "bill payment"
+        case culture
+        case need
+        case unplanned
+        case want
     }
     
     // MARK: ExpenseType
-    enum NBTransactionExpenseType: String, CaseIterable {
-        case friends, home, love,  mummy, office, personal, udit
+    enum NBTransactionSubCategory: String, CaseIterable {
+        case education
+        case entertainment
+        case foodAndDrinks = "food & drinks"
+        case gifts
+        case healthAndFitness = "health & fitness"
+        case lifestyle
+        case others
+        case transportAndFuel = "transport & fuel"
+        case utilities
     }
     
     // MARK: PaymentMethod
@@ -44,15 +50,11 @@ struct NBTransaction {
     
     // MARK: Field
     enum NBTransactionField: String, CaseIterable {
-        case date, title, category
-        case expenseType = "Expense Type"
-        case paymentMethod = "Payment Method"
+        case date, title, description, category
+        case subCategory = "Sub Category"
+        case debitAccount = "Debit Account"
+        case creditAccount = "Credit Account"
         case amount
-    }
-    
-    // MARK: TransactionType
-    enum NBTransactionType: String, CaseIterable {
-        case credit, debit
     }
     
     // MARK: Temp
@@ -61,31 +63,34 @@ struct NBTransaction {
         var date: Date?
         let defaultDate: Date = .now
         var title: String?
-        var transactionType: NBTransactionType = .debit
+        var description: String?
         var category: NBTransactionCategory?
-        var expenseType: NBTransactionExpenseType?
-        var paymentMethod: NBTransactionPaymentMethod?
+        var subCategory: NBTransactionSubCategory?
+        var debitAccount: NBTransactionPaymentMethod?
+        var creditAccount: NBTransactionPaymentMethod?
         var amount: Double?
     }
     
     let id: UUID
     let date: Date
     let title: String
-    let transactionType: NBTransactionType
+    let description: String
     let category: NBTransactionCategory
-    let expenseType: NBTransactionExpenseType
-    let paymentMethod: NBTransactionPaymentMethod
+    let subCategory: NBTransactionSubCategory
+    let debitAccount: NBTransactionPaymentMethod?
+    let creditAccount: NBTransactionPaymentMethod?
     let amount: Double
     
     // MARK: Constructor
-    init(id: UUID = UUID(), date: Date = .now, title: String, transactionType: NBTransactionType, category: NBTransactionCategory, expenseType: NBTransactionExpenseType, paymentMethod: NBTransactionPaymentMethod, amount: Double) {
+    init(id: UUID = UUID(), date: Date = .now, title: String, description: String = "", category: NBTransactionCategory, subCategory: NBTransactionSubCategory, debitAccount: NBTransactionPaymentMethod?, creditAccount: NBTransactionPaymentMethod?, amount: Double) {
         self.id = id
         self.date = date
         self.title = title
-        self.transactionType = transactionType
+        self.description = description
         self.category = category
-        self.expenseType = expenseType
-        self.paymentMethod = paymentMethod
+        self.subCategory = subCategory
+        self.debitAccount = debitAccount
+        self.creditAccount = creditAccount
         self.amount = amount
     }
 }
@@ -96,39 +101,32 @@ extension NBTransaction.NBTransactionCategory {
     var title: String {
         rawValue.capitalized
     }
-}
-
-
-// MARK: - ExpenseType
-extension NBTransaction.NBTransactionExpenseType {
-    var title: String {
-        rawValue.capitalized
-    }
-}
-
-
-// MARK: - Field
-extension NBTransaction.NBTransactionField {
-    func getTitle(for transactionType: NBTransaction.NBTransactionType) -> String {
-        let paidOrReceivedString = transactionType == .debit ? "Paid" : "Received"
-        switch self {
-        case .date:
-            return "\(Date.now.formatted(date: .abbreviated, time: .omitted)) (Default)"
-        case .title:
-            return paidOrReceivedString + " for..."
-        case .category, .expenseType:
-            return rawValue.capitalized
-        case .paymentMethod:
-            return paidOrReceivedString + " using..."
-        case .amount:
-            return rawValue.capitalized
+    
+    static func getCategory(for importText: String) -> NBTransaction.NBTransactionCategory {
+        switch importText.lowercased() {
+        case "needs", "health & fitness", "gifts", "mummy", "home", "love", "papa", "office", "utilities", "udit", "clothing", "self care", "education", "car", "bike":
+            return .need
+        case "credit bill payments":
+            return .billPayment
+        case "friends":
+            return .culture
+        case "personal", "entertainment", "wants", "food & drinks":
+            return .want
+        case "others", "":
+            return .unplanned
+        default:
+            let category = NBTransaction.NBTransactionCategory(rawValue: importText.lowercased())
+            if category == nil {
+                debugPrint(#function, "Using 'Want' Category for '\(importText)'")
+            }
+            return category ?? .want
         }
     }
 }
 
 
-// MARK: - TransactionType
-extension NBTransaction.NBTransactionType {
+// MARK: - ExpenseType
+extension NBTransaction.NBTransactionSubCategory {
     var title: String {
         rawValue.capitalized
     }
@@ -138,34 +136,22 @@ extension NBTransaction.NBTransactionType {
 // MARK: - TempTransaction
 extension NBTransaction.NBTempTransaction {
     func getTransaction() -> NBTransaction? {
-        guard let title, let category, let expenseType, let paymentMethod, let amount else { return nil }
-        return NBTransaction(id: id ?? UUID(), date: date ?? .now, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: amount)
+        guard let title, let category, let subCategory, let amount else {
+            debugPrint(#function, self)
+            return nil
+        }
+        return NBTransaction(id: id ?? UUID(), date: date ?? .now, title: title, description: description ?? "", category: category, subCategory: subCategory, debitAccount: debitAccount, creditAccount: creditAccount, amount: amount)
     }
     
     init(transaction: NBTransaction) {
-        self.init(id: transaction.id, date: transaction.date, title: transaction.title, transactionType: transaction.transactionType, category: transaction.category, expenseType: transaction.expenseType, paymentMethod: transaction.paymentMethod, amount: transaction.amount)
+        self.init(id: transaction.id, date: transaction.date, title: transaction.title, description: transaction.description, category: transaction.category, subCategory: transaction.subCategory, debitAccount: transaction.debitAccount, creditAccount: transaction.creditAccount, amount: transaction.amount)
     }
 }
 
-
-// MARK: - PaymentMethod
-extension NBTransaction.NBTransactionPaymentMethod {
-    func getTotalAmount(for transactionType: NBTransaction.NBTransactionType? = nil) -> Double {
-        let transactions: [NBTransaction]
-        if let transactionType {
-            transactions = self.transactions.filter({ $0.transactionType == transactionType })
-        } else {
-            transactions = self.transactions
-        }
-        return transactions.reduce(.zero) { partialResult, transaction in
-            partialResult + (transaction.transactionType == .debit ? transaction.amount : -transaction.amount)
-        }
-    }
-}
 
 // MARK: - Amount Description
 extension NBTransaction {
     var amountDescription: String {
-        (transactionType == .credit ? "+ " : "") + "₹" + abs(amount).formatted()
+        (debitAccount == nil ? "+ " : "") + "₹" + abs(amount).formatted()
     }
 }

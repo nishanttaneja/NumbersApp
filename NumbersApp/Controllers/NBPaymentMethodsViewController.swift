@@ -51,7 +51,16 @@ final class NBPaymentMethodsViewController: UITableViewController {
         guard let detailCell = cell as? NBTransactionDetailTableViewCell, indexPath.row < paymentMethods.count else { return cell }
         let paymentMethod = paymentMethods[indexPath.row]
         detailCell.textLabel?.text = paymentMethod.title
-        let totalAmount = paymentMethod.getTotalAmount()
+        let totalAmount = paymentMethod.transactions.reduce(Double.zero) { partialResult, transaction in
+            var updatingAmount: Double = .zero
+            if transaction.debitAccount != nil {
+                updatingAmount = partialResult - transaction.amount
+            }
+            if transaction.creditAccount != nil {
+                updatingAmount = partialResult + transaction.amount
+            }
+            return updatingAmount
+        }
         detailCell.detailTextLabel?.text = "\(totalAmount < .zero ? "+ " : "")₹" + abs(totalAmount).formatted()
         detailCell.detailTextLabel?.textColor = totalAmount < .zero ? .systemGreen : .systemGray
         return detailCell

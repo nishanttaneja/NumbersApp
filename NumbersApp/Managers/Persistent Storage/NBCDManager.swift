@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import WidgetKit
 
 // MARK: - NBCDManager
 final class NBCDManager {
@@ -58,22 +59,43 @@ extension NBCDManager {
                 transaction.transactionID = newTransaction.id
                 transaction.date = newTransaction.date
                 transaction.title = newTransaction.title
-                transaction.transactionType = newTransaction.transactionType.rawValue
+                transaction.transactionDescription = newTransaction.description
                 transaction.category = newTransaction.category.rawValue
-                transaction.expenseType = newTransaction.expenseType.rawValue
+                transaction.subCategory = newTransaction.subCategory.rawValue
                 transaction.amount = newTransaction.amount
                 // Fetching Payment Method
                 let request = NBCDTransactionPaymentMethod.fetchRequest()
-                request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), newTransaction.paymentMethod.title)
-                if let paymentMethod = try context.fetch(request).first {
+                var predicates: [NSPredicate] = []
+                if let debitAccount = newTransaction.debitAccount {
+                    predicates.append(NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), debitAccount.title))
+                }
+                if let creditAccount = newTransaction.creditAccount {
+                    predicates.append(NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), creditAccount.title))
+                }
+                request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
+                let paymentMethods = try context.fetch(request)
+                if let debitAccount = paymentMethods.first(where: { $0.title?.isEmpty == false && $0.title == newTransaction.debitAccount?.title }) {
                     // Adding to Payment Method
-                    paymentMethod.addToTransactions(transaction)
-                } else {
+                    debitAccount.addToDebitTransactions(transaction)
+                } else if let debitAcount = newTransaction.debitAccount {
                     // Creating new Payment Method
                     let paymentMethod = NBCDTransactionPaymentMethod(context: context)
-                    paymentMethod.paymentMethodID = newTransaction.paymentMethod.id
-                    paymentMethod.title = newTransaction.paymentMethod.title
-                    paymentMethod.addToTransactions(transaction)
+                    paymentMethod.paymentMethodID = debitAcount.id
+                    paymentMethod.title = debitAcount.title
+                    paymentMethod.addToDebitTransactions(transaction)
+                    if debitAcount.title == newTransaction.creditAccount?.title {
+                        paymentMethod.addToCreditTransactions(transaction)
+                    }
+                }
+                if let creditAccount = paymentMethods.first(where: { $0.title?.isEmpty == false && $0.title == newTransaction.creditAccount?.title }), creditAccount.title != newTransaction.debitAccount?.title {
+                    // Adding to Payment Method
+                    creditAccount.addToCreditTransactions(transaction)
+                } else if let creditAccount = newTransaction.creditAccount, creditAccount.title != newTransaction.debitAccount?.title {
+                    // Creating new Payment Method
+                    let paymentMethod = NBCDTransactionPaymentMethod(context: context)
+                    paymentMethod.paymentMethodID = creditAccount.id
+                    paymentMethod.title = creditAccount.title
+                    paymentMethod.addToCreditTransactions(transaction)
                 }
                 if context.hasChanges {
                     try context.save()
@@ -81,6 +103,7 @@ extension NBCDManager {
                 } else {
                     completionHandler(.success(false))
                 }
+                WidgetCenter.shared.reloadAllTimelines()
             } catch let error {
                 debugPrint(#function, error)
                 completionHandler(.failure(error))
@@ -97,22 +120,43 @@ extension NBCDManager {
                     transaction.transactionID = newTransaction.id
                     transaction.date = newTransaction.date
                     transaction.title = newTransaction.title
-                    transaction.transactionType = newTransaction.transactionType.rawValue
+                    transaction.transactionDescription = newTransaction.description
                     transaction.category = newTransaction.category.rawValue
-                    transaction.expenseType = newTransaction.expenseType.rawValue
-                    transaction.amount = (newTransaction.transactionType == .debit ? 1 : -1) * newTransaction.amount
+                    transaction.subCategory = newTransaction.subCategory.rawValue
+                    transaction.amount = newTransaction.amount
                     // Fetching Payment Method
                     let request = NBCDTransactionPaymentMethod.fetchRequest()
-                    request.predicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), newTransaction.paymentMethod.title)
-                    if let paymentMethod = try context.fetch(request).first {
+                    var predicates: [NSPredicate] = []
+                    if let debitAccount = newTransaction.debitAccount {
+                        predicates.append(NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), debitAccount.title))
+                    }
+                    if let creditAccount = newTransaction.creditAccount {
+                        predicates.append(NSPredicate(format: "%K == %@", #keyPath(NBCDTransactionPaymentMethod.title), creditAccount.title))
+                    }
+                    request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
+                    let paymentMethods = try context.fetch(request)
+                    if let debitAccount = paymentMethods.first(where: { $0.title?.isEmpty == false && $0.title == newTransaction.debitAccount?.title }) {
                         // Adding to Payment Method
-                        paymentMethod.addToTransactions(transaction)
-                    } else {
+                        debitAccount.addToDebitTransactions(transaction)
+                    } else if let debitAcount = newTransaction.debitAccount {
                         // Creating new Payment Method
                         let paymentMethod = NBCDTransactionPaymentMethod(context: context)
-                        paymentMethod.paymentMethodID = newTransaction.paymentMethod.id
-                        paymentMethod.title = newTransaction.paymentMethod.title
-                        paymentMethod.addToTransactions(transaction)
+                        paymentMethod.paymentMethodID = debitAcount.id
+                        paymentMethod.title = debitAcount.title
+                        paymentMethod.addToDebitTransactions(transaction)
+                        if debitAcount.title == newTransaction.creditAccount?.title {
+                            paymentMethod.addToCreditTransactions(transaction)
+                        }
+                    }
+                    if let creditAccount = paymentMethods.first(where: { $0.title?.isEmpty == false && $0.title == newTransaction.creditAccount?.title }), creditAccount.title != newTransaction.debitAccount?.title {
+                        // Adding to Payment Method
+                        creditAccount.addToCreditTransactions(transaction)
+                    } else if let creditAccount = newTransaction.creditAccount, creditAccount.title != newTransaction.debitAccount?.title {
+                        // Creating new Payment Method
+                        let paymentMethod = NBCDTransactionPaymentMethod(context: context)
+                        paymentMethod.paymentMethodID = creditAccount.id
+                        paymentMethod.title = creditAccount.title
+                        paymentMethod.addToCreditTransactions(transaction)
                     }
                 }
                 if context.hasChanges {
@@ -121,6 +165,7 @@ extension NBCDManager {
                 } else {
                     completionHandler(.success(false))
                 }
+                WidgetCenter.shared.reloadAllTimelines()
             } catch let error {
                 debugPrint(#function, error)
                 completionHandler(.failure(error))
@@ -136,17 +181,75 @@ extension NBCDManager {
                 guard let transactionId = savedTransaction.transactionID,
                       let date = savedTransaction.date,
                       let title = savedTransaction.title,
-                      let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
                       let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
-                      let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue),
-                      let paymentMethodId = savedTransaction.paymentMethod?.paymentMethodID, let paymentMethodTitle = savedTransaction.paymentMethod?.title else { return nil }
-                let paymentMethod = NBTransaction.NBTransactionPaymentMethod(id: paymentMethodId, title: paymentMethodTitle)
-                return NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: savedTransaction.amount)
+                      let subCategoryRawValue = savedTransaction.subCategory, let subCategory = NBTransaction.NBTransactionSubCategory(rawValue: subCategoryRawValue) else { return nil }
+                let debitAccount: NBTransaction.NBTransactionPaymentMethod?
+                if let debitAccountId = savedTransaction.debitAccount?.paymentMethodID, let debitAccountTitle = savedTransaction.debitAccount?.title {
+                    debitAccount = NBTransaction.NBTransactionPaymentMethod(id: debitAccountId, title: debitAccountTitle)
+                } else {
+                    debitAccount = nil
+                }
+                let creditAccount: NBTransaction.NBTransactionPaymentMethod?
+                if let creditAccountId = savedTransaction.creditAccount?.paymentMethodID, let creditAccountTitle = savedTransaction.creditAccount?.title {
+                    creditAccount = NBTransaction.NBTransactionPaymentMethod(id: creditAccountId, title: creditAccountTitle)
+                } else {
+                    creditAccount = nil
+                }
+                return NBTransaction(id: transactionId, date: date, title: title, description: savedTransaction.transactionDescription ?? "", category: category, subCategory: subCategory, debitAccount: debitAccount, creditAccount: creditAccount, amount: savedTransaction.amount)
             }
             completionHandler(.success(transactionsToDisplay))
         } catch let error {
             debugPrint(#function, error)
             completionHandler(.failure(error))
+        }
+    }
+    @available(*, renamed: "loadAllTransactions(afterDateTime:)")
+    func loadAllTransactions(afterDateTime: Date, completionHandler: @escaping (_ result: Result<[NBTransaction], Error>) -> Void) {
+        Task {
+            do {
+                let result = try await loadAllTransactions(afterDateTime: afterDateTime)
+                completionHandler(.success(result))
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    
+    
+    func loadAllTransactions(afterDateTime: Date) async throws -> [NBTransaction] {
+        return try await withCheckedThrowingContinuation { continuation in
+            persistentContainer.viewContext.perform {
+                do {
+                    let request = NBCDTransaction.fetchRequest()
+                    request.sortDescriptors = [NSSortDescriptor(key: #keyPath(NBCDTransaction.date), ascending: false)]
+                    request.predicate = NSPredicate(format: "%K > %@", #keyPath(NBCDTransaction.date), afterDateTime as CVarArg)
+                    let savedTransactions = try self.persistentContainer.viewContext.fetch(request)
+                    let transactionsToDisplay: [NBTransaction] = savedTransactions.compactMap { savedTransaction in
+                        guard let transactionId = savedTransaction.transactionID,
+                              let date = savedTransaction.date,
+                              let title = savedTransaction.title,
+                              let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
+                              let subCategoryRawValue = savedTransaction.subCategory, let subCategory = NBTransaction.NBTransactionSubCategory(rawValue: subCategoryRawValue) else { return nil }
+                        let debitAccount: NBTransaction.NBTransactionPaymentMethod?
+                        if let debitAccountId = savedTransaction.debitAccount?.paymentMethodID, let debitAccountTitle = savedTransaction.debitAccount?.title {
+                            debitAccount = NBTransaction.NBTransactionPaymentMethod(id: debitAccountId, title: debitAccountTitle)
+                        } else {
+                            debitAccount = nil
+                        }
+                        let creditAccount: NBTransaction.NBTransactionPaymentMethod?
+                        if let creditAccountId = savedTransaction.creditAccount?.paymentMethodID, let creditAccountTitle = savedTransaction.creditAccount?.title {
+                            creditAccount = NBTransaction.NBTransactionPaymentMethod(id: creditAccountId, title: creditAccountTitle)
+                        } else {
+                            creditAccount = nil
+                        }
+                        return NBTransaction(id: transactionId, date: date, title: title, description: savedTransaction.transactionDescription ?? "", category: category, subCategory: subCategory, debitAccount: debitAccount, creditAccount: creditAccount, amount: savedTransaction.amount)
+                    }
+                    continuation.resume(with: .success(transactionsToDisplay))
+                } catch let error {
+                    debugPrint(#function, error)
+                    continuation.resume(with: .failure(error))
+                }
+            }
         }
     }
     func loadTransaction(having id: UUID, completionHandler: @escaping (_ result: Result<NBTransaction, Error>) -> Void) {
@@ -161,12 +264,21 @@ extension NBCDManager {
                   let transactionId = savedTransaction.transactionID,
                   let date = savedTransaction.date,
                   let title = savedTransaction.title,
-                  let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
                   let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
-                  let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue),
-                  let paymentMethodId = savedTransaction.paymentMethod?.paymentMethodID, let paymentMethodTitle = savedTransaction.paymentMethod?.title else  { throw NBCDError.noDataFound }
-            let paymentMethod = NBTransaction.NBTransactionPaymentMethod(id: paymentMethodId, title: paymentMethodTitle)
-            let transactionToDisplay = NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: savedTransaction.amount)
+                  let subCategoryRawValue = savedTransaction.subCategory, let subCategory = NBTransaction.NBTransactionSubCategory(rawValue: subCategoryRawValue) else { throw NBCDError.noDataFound }
+            let debitAccount: NBTransaction.NBTransactionPaymentMethod?
+            if let debitAccountId = savedTransaction.debitAccount?.paymentMethodID, let debitAccountTitle = savedTransaction.debitAccount?.title {
+                debitAccount = NBTransaction.NBTransactionPaymentMethod(id: debitAccountId, title: debitAccountTitle)
+            } else {
+                debitAccount = nil
+            }
+            let creditAccount: NBTransaction.NBTransactionPaymentMethod?
+            if let creditAccountId = savedTransaction.creditAccount?.paymentMethodID, let creditAccountTitle = savedTransaction.creditAccount?.title {
+                creditAccount = NBTransaction.NBTransactionPaymentMethod(id: creditAccountId, title: creditAccountTitle)
+            } else {
+                creditAccount = nil
+            }
+            let transactionToDisplay = NBTransaction(id: transactionId, date: date, title: title, description: savedTransaction.transactionDescription ?? "", category: category, subCategory: subCategory, debitAccount: debitAccount, creditAccount: creditAccount, amount: savedTransaction.amount)
             completionHandler(.success(transactionToDisplay))
         } catch let error {
             debugPrint(#function, error)
@@ -176,21 +288,32 @@ extension NBCDManager {
     func loadAllTransactions(havingPaymentMethod paymentMethodTitle: String, startDate: Date, completionHandler: @escaping (_ result: Result<[NBTransaction], Error>) -> Void) {
         let request = NBCDTransaction.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(NBCDTransaction.date), ascending: false)]
-        let paymentMethodTitlePredicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransaction.paymentMethod.title), paymentMethodTitle)
+        let debitAccountTitlePredicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransaction.debitAccount.title), paymentMethodTitle)
+        let creditAccountTitlePredicate = NSPredicate(format: "%K == %@", #keyPath(NBCDTransaction.creditAccount.title), paymentMethodTitle)
+        let accountTitlePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [debitAccountTitlePredicate, creditAccountTitlePredicate])
         let startDatePredicate = NSPredicate(format: "%K > %@", #keyPath(NBCDTransaction.date), startDate as CVarArg)
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [paymentMethodTitlePredicate, startDatePredicate])
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [accountTitlePredicate, startDatePredicate])
         do {
             let savedTransactions = try persistentContainer.viewContext.fetch(request)
             let transactionsToDisplay: [NBTransaction] = savedTransactions.compactMap { savedTransaction in
                 guard let transactionId = savedTransaction.transactionID,
                       let date = savedTransaction.date,
                       let title = savedTransaction.title,
-                      let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
                       let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
-                      let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue),
-                      let paymentMethodId = savedTransaction.paymentMethod?.paymentMethodID, let paymentMethodTitle = savedTransaction.paymentMethod?.title else { return nil }
-                let paymentMethod = NBTransaction.NBTransactionPaymentMethod(id: paymentMethodId, title: paymentMethodTitle)
-                return NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: paymentMethod, amount: savedTransaction.amount)
+                      let subCategoryRawValue = savedTransaction.subCategory, let subCategory = NBTransaction.NBTransactionSubCategory(rawValue: subCategoryRawValue) else { return nil }
+                let debitAccount: NBTransaction.NBTransactionPaymentMethod?
+                if let debitAccountId = savedTransaction.debitAccount?.paymentMethodID, let debitAccountTitle = savedTransaction.debitAccount?.title {
+                    debitAccount = NBTransaction.NBTransactionPaymentMethod(id: debitAccountId, title: debitAccountTitle)
+                } else {
+                    debitAccount = nil
+                }
+                let creditAccount: NBTransaction.NBTransactionPaymentMethod?
+                if let creditAccountId = savedTransaction.creditAccount?.paymentMethodID, let creditAccountTitle = savedTransaction.creditAccount?.title {
+                    creditAccount = NBTransaction.NBTransactionPaymentMethod(id: creditAccountId, title: creditAccountTitle)
+                } else {
+                    creditAccount = nil
+                }
+                return NBTransaction(id: transactionId, date: date, title: title, description: savedTransaction.description, category: category, subCategory: subCategory, debitAccount: debitAccount, creditAccount: creditAccount, amount: savedTransaction.amount)
             }
             completionHandler(.success(transactionsToDisplay))
         } catch let error {
@@ -216,6 +339,7 @@ extension NBCDManager {
                 } else {
                     completionHandler(.success(false))
                 }
+                WidgetCenter.shared.reloadAllTimelines()
             } catch let error {
                 debugPrint(#function, error)
                 completionHandler(.failure(error))
@@ -233,31 +357,38 @@ extension NBCDManager {
             let lines = String(data: data, encoding: .utf8)?.components(separatedBy: "\r\n") ?? []
             var transactionsToSave = [NBTransaction]()
             for line in lines {
+                debugPrint(line)
                 let components = line.components(separatedBy: ",").reversed()
                 guard let dateString = components.last, let date = Date.getDate(from: dateString, in: "dd/MM/yyyy") else { continue }
                 var tempTransaction = NBTransaction.NBTempTransaction(date: date)
-                var titleComponents: [String] = []
+                var descriptionComponents: [String] = []
                 for (index, component) in components.enumerated() {
                     guard index < components.count-1 else { break }
+                    debugPrint(index, component)
                     switch index {
                     case .zero:
                         guard let amount = Double(component) else { break }
                         tempTransaction.amount = amount
-                        if amount < .zero {
-                            tempTransaction.transactionType = .credit
-                        }
                     case 1:
-                        tempTransaction.paymentMethod = .init(title: component)
+                        if component.replacingOccurrences(of: " ", with: "").isEmpty == false {
+                            tempTransaction.creditAccount = .init(title: component)
+                        }
                     case 2:
-                        tempTransaction.category = .init(rawValue: component.lowercased())
+                        if component.replacingOccurrences(of: " ", with: "").isEmpty == false {
+                            tempTransaction.debitAccount = .init(title: component)
+                        }
                     case 3:
-                        tempTransaction.expenseType = .init(rawValue: "friends"/*component.lowercased()*/)
+                        tempTransaction.subCategory = .init(rawValue: component.lowercased())
+                    case 4:
+                        tempTransaction.category = .getCategory(for: component)
+                    case components.count-2:
+                        tempTransaction.title = component
                     default:
-                        titleComponents.insert(component, at: .zero)
+                        descriptionComponents.insert(component, at: .zero)
                     }
                 }
-                let title = titleComponents.joined(separator: ",")
-                tempTransaction.title = title.replacingOccurrences(of: " ", with: "").isEmpty == false ? title : nil
+                let description = descriptionComponents.joined(separator: ",")
+                tempTransaction.description = description.replacingOccurrences(of: " ", with: "").isEmpty == false ? description : nil
                 guard let transaction = tempTransaction.getTransaction() else { continue }
                 transactionsToSave.append(transaction)
             }
@@ -281,16 +412,23 @@ extension NBCDManager {
                 let paymentMethodsToDisplay: [NBTransaction.NBTransactionPaymentMethod] = savedPaymentMethods.compactMap { savedPaymentMethod in
                     guard let id = savedPaymentMethod.paymentMethodID,
                           let title = savedPaymentMethod.title,
-                          let transactions: [NBTransaction] = (savedPaymentMethod.transactions?.allObjects as? [NBCDTransaction])?.compactMap({ savedTransaction in
+                          let debitTransactions: [NBTransaction] = (savedPaymentMethod.debitTransactions?.allObjects as? [NBCDTransaction])?.compactMap({ savedTransaction in
                               guard let transactionId = savedTransaction.transactionID,
                                     let date = savedTransaction.date,
                                     let title = savedTransaction.title,
-                                    let transactionTypeRawValue = savedTransaction.transactionType, let transactionType = NBTransaction.NBTransactionType(rawValue: transactionTypeRawValue),
                                     let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
-                                    let expenseTypeRawValue = savedTransaction.expenseType, let expenseType = NBTransaction.NBTransactionExpenseType(rawValue: expenseTypeRawValue) else  { return nil }
-                              return NBTransaction(id: transactionId, date: date, title: title, transactionType: transactionType, category: category, expenseType: expenseType, paymentMethod: .init(id: id, title: title, transactions: []), amount: savedTransaction.amount)
+                                    let subCategoryRawValue = savedTransaction.subCategory, let subCategory = NBTransaction.NBTransactionSubCategory(rawValue: subCategoryRawValue) else { return nil }
+                              return NBTransaction(id: transactionId, date: date, title: title, description: savedTransaction.transactionDescription ?? "", category: category, subCategory: subCategory, debitAccount: NBTransaction.NBTransactionPaymentMethod(id: id, title: title, transactions: []), creditAccount: nil, amount: savedTransaction.amount)
+                          }),
+                          let creditTransactions: [NBTransaction] = (savedPaymentMethod.creditTransactions?.allObjects as? [NBCDTransaction])?.compactMap({ savedTransaction in
+                              guard let transactionId = savedTransaction.transactionID,
+                                    let date = savedTransaction.date,
+                                    let title = savedTransaction.title,
+                                    let categoryRawValue = savedTransaction.category, let category = NBTransaction.NBTransactionCategory(rawValue: categoryRawValue),
+                                    let subCategoryRawValue = savedTransaction.subCategory, let subCategory = NBTransaction.NBTransactionSubCategory(rawValue: subCategoryRawValue) else { return nil }
+                              return NBTransaction(id: transactionId, date: date, title: title, description: savedTransaction.transactionDescription ?? "", category: category, subCategory: subCategory, debitAccount: nil, creditAccount: NBTransaction.NBTransactionPaymentMethod(id: id, title: title, transactions: []), amount: savedTransaction.amount)
                           }) else { return nil }
-                    return NBTransaction.NBTransactionPaymentMethod(id: id, title: title, transactions: transactions)
+                    return NBTransaction.NBTransactionPaymentMethod(id: id, title: title, transactions: debitTransactions+creditTransactions)
                 }
                 completionHandler(.success(paymentMethodsToDisplay))
             } catch let error {
