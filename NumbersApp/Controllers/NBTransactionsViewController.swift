@@ -70,10 +70,9 @@ final class NBTransactionsViewController: UIViewController, UITableViewDataSourc
         let cell = tableView.dequeueReusableCell(withIdentifier: defaultCellReuseIdentifier, for: indexPath)
         guard indexPath.section < transactionsSeparatedByDate.count, indexPath.row < transactionsSeparatedByDate[indexPath.section].transactions.count else { return cell }
         let transaction = transactionsSeparatedByDate[indexPath.section].transactions[indexPath.row]
-        cell.textLabel?.text = transaction.title
+        cell.textLabel?.text = transaction.title + (!transaction.description.isEmpty ? " - \(transaction.description)" : "")
         cell.textLabel?.numberOfLines = .zero
         cell.detailTextLabel?.text = transaction.amountDescription
-        cell.detailTextLabel?.textColor = transaction.transactionType == .credit ? .systemGreen : .systemGray
         return cell
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

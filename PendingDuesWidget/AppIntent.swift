@@ -38,7 +38,16 @@ struct CardEntityQuery: EntityQuery {
     func suggestedEntities() async throws -> [CardEntity] {
         let paymentMethods = try await NBCDManager.shared.loadAllPaymentMethods()
         let cardEntities: [CardEntity] = paymentMethods.compactMap { paymentMethod in
-            CardEntity(id: paymentMethod.id.uuidString, title: paymentMethod.title, amount: paymentMethod.getTotalAmount())
+            CardEntity(id: paymentMethod.id.uuidString, title: paymentMethod.title, amount: paymentMethod.transactions.reduce(Double.zero) { partialResult, transaction in
+                var updatingAmount: Double = .zero
+                if transaction.debitAccount != nil {
+                    updatingAmount = partialResult - transaction.amount
+                }
+                if transaction.creditAccount != nil {
+                    updatingAmount = partialResult + transaction.amount
+                }
+                return updatingAmount
+            })
         }
         return cardEntities
     }

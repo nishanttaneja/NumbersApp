@@ -7,11 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B40462912B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40462902B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift */; };
-		B40462932B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = B40462922B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel */; };
 		B40602F72B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40602F62B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift */; };
-		B40EFD802B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40EFD7F2B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift */; };
-		B40EFD822B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = B40EFD812B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel */; };
 		B47D65DA2B7BEF3300DE3331 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B47D65D92B7BEF3300DE3331 /* WidgetKit.framework */; };
 		B47D65DC2B7BEF3300DE3331 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B47D65DB2B7BEF3300DE3331 /* SwiftUI.framework */; };
 		B47D65DF2B7BEF3300DE3331 /* PendingDuesWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47D65DE2B7BEF3300DE3331 /* PendingDuesWidgetBundle.swift */; };
@@ -73,12 +69,8 @@
 
 /* Begin PBXFileReference section */
 		B404628E2B3FE6E2009D669C /* NBDB v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NBDB v2.xcdatamodel"; sourceTree = "<group>"; };
-		B40462902B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCDTransactionTypeMigrationPolicy.swift; sourceTree = "<group>"; };
-		B40462922B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = NBCDTransactionTypeMappingModel.xcmappingmodel; sourceTree = "<group>"; };
 		B40602F62B40ADCC00A0AD0A /* NBPaymentMethodsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBPaymentMethodsViewController.swift; sourceTree = "<group>"; };
 		B40EFD7E2B407EEA0058A447 /* NBDB v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NBDB v3.xcdatamodel"; sourceTree = "<group>"; };
-		B40EFD7F2B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBCDTransactionPaymentMethodMigrationPolicy.swift; sourceTree = "<group>"; };
-		B40EFD812B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = NBCDTransactionPaymentMethodMappingModel.xcmappingmodel; sourceTree = "<group>"; };
 		B47D65D72B7BEF3300DE3331 /* PendingDuesWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PendingDuesWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B47D65D92B7BEF3300DE3331 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		B47D65DB2B7BEF3300DE3331 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -137,11 +129,7 @@
 		B404628F2B3FE754009D669C /* Persistent Storage */ = {
 			isa = PBXGroup;
 			children = (
-				B40462922B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel */,
 				B4C37EC12B3F2F6D00731635 /* NBCDManager.swift */,
-				B40462902B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift */,
-				B40EFD7F2B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift */,
-				B40EFD812B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel */,
 			);
 			path = "Persistent Storage";
 			sourceTree = "<group>";
@@ -381,12 +369,8 @@
 				B48301342B419DF800F1F9FF /* NBCreditCardBillsViewController.swift in Sources */,
 				B4C37ECC2B3F543D00731635 /* Date+Extension.swift in Sources */,
 				B4AB3C7D2B3DF20A006EDFBE /* UIView+Extension.swift in Sources */,
-				B40EFD802B40818A0058A447 /* NBCDTransactionPaymentMethodMigrationPolicy.swift in Sources */,
 				B48301302B418F6700F1F9FF /* NBDateTimeManager.swift in Sources */,
 				B4C37EBD2B3F2DB500731635 /* NBDB.xcdatamodeld in Sources */,
-				B40462932B3FE907009D669C /* NBCDTransactionTypeMappingModel.xcmappingmodel in Sources */,
-				B40462912B3FE790009D669C /* NBCDTransactionTypeMigrationPolicy.swift in Sources */,
-				B40EFD822B40886E0058A447 /* NBCDTransactionPaymentMethodMappingModel.xcmappingmodel in Sources */,
 				B4AB3C752B3DECA7006EDFBE /* NBTransaction.swift in Sources */,
 				B4C37EC42B3F319E00731635 /* NBNCManager.swift in Sources */,
 				B4C37EC22B3F2F6D00731635 /* NBCDManager.swift in Sources */,
