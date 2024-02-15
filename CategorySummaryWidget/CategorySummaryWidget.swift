@@ -23,9 +23,9 @@ struct Provider: AppIntentTimelineProvider {
         do {
             let transactions = try await NBCDManager.shared.loadAllTransactions(afterDateTime: currentDate.startOfDay)
             entry.amountDescription = "₹" + String(format: "%.2f", transactions.reduce(Double.zero, { partialResult, transaction in
-                var sum = Double.zero
+                var sum = partialResult
                 if let debitAccount = transaction.debitAccount {
-                    sum = transaction.amount
+                    sum += transaction.amount
                 }
                 if let creditAccount = transaction.creditAccount {
                     sum -= transaction.amount
