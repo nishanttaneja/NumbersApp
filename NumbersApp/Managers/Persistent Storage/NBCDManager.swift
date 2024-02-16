@@ -216,13 +216,17 @@ extension NBCDManager {
     }
     
     
-    func loadAllTransactions(afterDateTime: Date) async throws -> [NBTransaction] {
+    func loadAllTransactions(afterDateTime: Date, beforeDateTime: Date? = nil) async throws -> [NBTransaction] {
         return try await withCheckedThrowingContinuation { continuation in
             persistentContainer.viewContext.perform {
                 do {
                     let request = NBCDTransaction.fetchRequest()
                     request.sortDescriptors = [NSSortDescriptor(key: #keyPath(NBCDTransaction.date), ascending: false)]
-                    request.predicate = NSPredicate(format: "%K > %@", #keyPath(NBCDTransaction.date), afterDateTime as CVarArg)
+                    var predicates = [NSPredicate(format: "%K > %@", #keyPath(NBCDTransaction.date), afterDateTime as CVarArg)]
+                    if let beforeDateTime {
+                        predicates.append(NSPredicate(format: "%K < %@", #keyPath(NBCDTransaction.date), beforeDateTime as CVarArg))
+                    }
+                    request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
                     let savedTransactions = try self.persistentContainer.viewContext.fetch(request)
                     let transactionsToDisplay: [NBTransaction] = savedTransactions.compactMap { savedTransaction in
                         guard let transactionId = savedTransaction.transactionID,

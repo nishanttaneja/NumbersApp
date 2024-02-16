@@ -23,10 +23,10 @@ final class NBTransactionsViewController: UIViewController, UITableViewDataSourc
             self?.transactions = newTransactions
             self?.transactionsSeparatedByDate.removeAll()
             for transaction in newTransactions {
-                if let indexOfDateForExistingTransactions = self?.transactionsSeparatedByDate.firstIndex(where: { $0.dateString == transaction.date.formatted(date: .abbreviated, time: .omitted) }) {
+                if let indexOfDateForExistingTransactions = self?.transactionsSeparatedByDate.firstIndex(where: { $0.dateString == transaction.date.formatted(date: .complete, time: .omitted) }) {
                     self?.transactionsSeparatedByDate[indexOfDateForExistingTransactions].transactions.append(transaction)
                 } else {
-                    self?.transactionsSeparatedByDate.append((dateString: transaction.date.formatted(date: .abbreviated, time: .omitted), transactions: [transaction]))
+                    self?.transactionsSeparatedByDate.append((dateString: transaction.date.formatted(date: .complete, time: .omitted), transactions: [transaction]))
                 }
             }
             self?.transactionsListView.reloadData()

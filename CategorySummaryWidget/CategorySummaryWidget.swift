@@ -18,16 +18,26 @@ struct Provider: AppIntentTimelineProvider {
     }
     
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        let currentDate = Date()
-        var entry = SimpleEntry(date: currentDate, configuration: configuration, title: "Today")
+        let date = Date()
+        let dateTimeSummary: NBDateTimeManager.NBDateTimeSummary = .monthly
+        let startDateTime: Date
+        switch dateTimeSummary {
+        case .today:
+            startDateTime = date.startOfDay
+        case .weekly:
+            startDateTime = date.startOfWeek ?? date
+        case .monthly:
+            startDateTime = date.startOfMonth ?? date
+        }
+        var entry = SimpleEntry(date: date, configuration: configuration, dateTimeSummary: dateTimeSummary)
         do {
-            let transactions = try await NBCDManager.shared.loadAllTransactions(afterDateTime: currentDate.startOfDay)
+            let transactions = try await NBCDManager.shared.loadAllTransactions(afterDateTime: startDateTime)
             entry.amountDescription = "₹" + String(format: "%.2f", transactions.reduce(Double.zero, { partialResult, transaction in
                 var sum = partialResult
-                if let debitAccount = transaction.debitAccount {
+                if transaction.debitAccount != nil {
                     sum += transaction.amount
                 }
-                if let creditAccount = transaction.creditAccount {
+                if transaction.creditAccount != nil {
                     sum -= transaction.amount
                 }
                 return sum
@@ -42,7 +52,7 @@ struct Provider: AppIntentTimelineProvider {
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let configuration: ConfigurationAppIntent
-    var title: String?
+    var dateTimeSummary: NBDateTimeManager.NBDateTimeSummary?
     var amountDescription: String?
 }
 
@@ -51,8 +61,10 @@ struct CategorySummaryWidgetEntryView : View {
 
     var body: some View {
         VStack {
-            Text(entry.title ?? "")
+            Text(entry.dateTimeSummary?.title ?? "")
+                .font(.caption)
             Text(entry.amountDescription ?? "")
+                .bold()
         }
     }
 }
@@ -65,6 +77,7 @@ struct CategorySummaryWidget: Widget {
             CategorySummaryWidgetEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
+        .supportedFamilies([.systemSmall])
     }
 }
 

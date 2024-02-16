@@ -11,6 +11,14 @@ extension Date {
     var startOfDay: Date {
         Calendar.current.startOfDay(for: self)
     }
+    var startOfWeek: Date? {
+        let currentCalendar = Calendar.current
+        return currentCalendar.date(from: currentCalendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self))
+    }
+    var startOfMonth: Date? {
+        let currentCalendar = Calendar.current
+        return currentCalendar.date(from: currentCalendar.dateComponents([.month, .year], from: self))
+    }
     var monthYearTitle: String? {
         let dateComponents = Calendar.current.dateComponents([.month, .year], from: self)
         let monthSymbols = Calendar.current.monthSymbols
@@ -21,9 +29,10 @@ extension Date {
         }
         return title
     }
-    
-    // MARK: - String -> Date
-    static func getDate(from text: String, in format: String) -> Date? {
-        NBDateTimeManager.shared.getDate(from: text, in: format)
+    var weekDayTitle: String? {
+        let dateComponents = Calendar.current.dateComponents([.weekday, .weekOfYear, .yearForWeekOfYear], from: self)
+        let weekSymbols = Calendar.current.weekdaySymbols
+        guard let weekIndex = dateComponents.weekday, weekSymbols.count > weekIndex-1 else { return nil }
+        return weekSymbols[weekIndex-1]
     }
 }
